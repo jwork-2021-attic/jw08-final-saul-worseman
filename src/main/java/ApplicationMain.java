@@ -20,10 +20,12 @@ import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;
 import screen.Screen;
 import screen.StartScreen;
+import world.Creature;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -42,6 +44,17 @@ public class ApplicationMain extends JFrame implements KeyListener {
         screen = new StartScreen();
         addKeyListener(this);
         repaint();
+        Thread refreshTheard = new Thread(()->{
+            while(true){
+                try {
+                    TimeUnit.MILLISECONDS.sleep(50);
+                    repaint();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        refreshTheard.start();
     }
 
     @Override

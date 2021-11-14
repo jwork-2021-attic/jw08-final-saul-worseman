@@ -1,6 +1,9 @@
 package world;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /*
  * Copyright (C) 2015 Aeranythe Echosong
@@ -29,11 +32,13 @@ public class World {
     private Tile[][] tiles;
     private int width;
     private int height;
+    private List<Creature> creatures;
 
     public World(Tile[][] tiles) {
         this.tiles = tiles;
         this.width = tiles.length;
         this.height = tiles[0].length;
+        creatures = new ArrayList<>();
     }
 
     public Tile tile(int x, int y) {
@@ -64,5 +69,30 @@ public class World {
         tiles[x][y] = tile;
     }
 
+    public synchronized void addAtEmptyLocation(Creature creature) {
+        int x;
+        int y;
 
+        do {
+            x = (int) (Math.random() * this.width);
+            y = (int) (Math.random() * this.height);
+        } while (!tile(x, y).isGround() || this.creature(x, y) != null);
+
+        creature.setX(x);
+        creature.setY(y);
+        this.creatures.add(creature);
+    }
+
+    public synchronized  Creature creature(int x, int y){
+        Iterator<Creature> it = creatures.iterator();
+        while(it.hasNext()){
+            if(it.next().x() == x && it.next().y() == y)
+                return it.next();
+        }
+        return null;
+    }
+
+    public List<Creature> getCreatures(){
+        return creatures;
+    }
 }

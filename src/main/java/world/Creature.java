@@ -69,9 +69,6 @@ public class Creature {
         ai.onEnter(x + mx, y + my, world.tile(x + mx, y + my));
     }
 
-    public void route(){
-        ai.route();
-    }
 
 
     public void update() {
@@ -79,7 +76,7 @@ public class Creature {
     }
 
 
-    public Creature( char glyph, Color color) {
+    public Creature(char glyph, Color color) {
         this.glyph = glyph;
         this.color = color;
     }

@@ -32,12 +32,14 @@ public class PlayScreen implements Screen {
     private Creature player;
     private int screenWidth;
     private int screenHeight;
-
+    private GodThread god;
     public PlayScreen() {
         this.screenWidth = DIM;
         this.screenHeight = DIM;
         createWorld();
         createPlayer();
+        god = new GodThread(this.world);
+        god.start();
     }
 
     private void createPlayer() {
@@ -59,6 +61,9 @@ public class PlayScreen implements Screen {
                 //Take care! The x, y here is not that matrix's width or height;
                 terminal.write(world.glyph(wx, wy), x, y, world.color(wx, wy));
             }
+        }
+        for (Creature creature : world.getCreatures()){
+            terminal.write(creature.glyph(), creature.x(), creature.y(), creature.color());
         }
     }
 
