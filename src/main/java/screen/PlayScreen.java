@@ -18,9 +18,14 @@
 package screen;
 
 import asciiPanel.AsciiPanel;
+import messages.Messages;
 import world.*;
 
 import java.awt.event.KeyEvent;
+import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *
@@ -29,21 +34,26 @@ import java.awt.event.KeyEvent;
 public class PlayScreen implements Screen {
     public final static int DIM = 49;
     private World world;
-    private Creature player;
+    private Player player;
     private int screenWidth;
     private int screenHeight;
     private GodThread god;
+    private Messages messages;
     public PlayScreen() {
+
         this.screenWidth = DIM;
         this.screenHeight = DIM;
         createWorld();
         createPlayer();
+        world.registerPlayer(player);
+        messages = new Messages(DIM,0,30);
         god = new GodThread(this.world);
         god.start();
     }
 
     private void createPlayer() {
         this.player = Player.getPlayer();
+        player.revive();
         player.setWorld(world);
         new PlayerAI(player);
     }
@@ -75,7 +85,9 @@ public class PlayScreen implements Screen {
         // Player
         terminal.write(player.glyph(), player.x() , player.y() , player.color());
         // Messages
+        messages.display(terminal);
     }
+
 
     @Override
     public Screen respondToUserInput(KeyEvent key) {
@@ -94,6 +106,15 @@ public class PlayScreen implements Screen {
                 break;
         }
         return this;
+    }
+
+    public Screen nextFrame(){
+        if(player.hp() <= 0)
+            return new LoseScreen();
+        else if(player.getCredits()>= 10)
+            return new WinScreen();
+        else
+            return this;
     }
 
 }

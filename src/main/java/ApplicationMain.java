@@ -47,6 +47,7 @@ public class ApplicationMain extends JFrame implements KeyListener {
         Thread refreshTheard = new Thread(()->{
             while(true){
                 try {
+                    screen = screen.nextFrame();
                     TimeUnit.MILLISECONDS.sleep(50);
                     repaint();
                 } catch (InterruptedException e) {

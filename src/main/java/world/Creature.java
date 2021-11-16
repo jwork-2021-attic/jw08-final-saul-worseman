@@ -17,6 +17,8 @@
  */
 package world;
 
+import screen.Screen;
+
 import java.awt.*;
 
 /**
@@ -25,10 +27,13 @@ import java.awt.*;
  */
 public class Creature {
 
+    private int Hp;
     protected World world;
 
+    private int credits;
     private int x;
 
+    public int hp(){return Hp;}
     public void setX(int x) {
         this.x = x;
     }
@@ -38,6 +43,8 @@ public class Creature {
     }
 
     private int y;
+
+    private int attackValue;
 
     public void setY(int y) {
         this.y = y;
@@ -66,23 +73,57 @@ public class Creature {
     }
 
     public void moveBy(int mx, int my) {
-        ai.onEnter(x + mx, y + my, world.tile(x + mx, y + my));
+        Creature other = world.creature(x + mx, y + my);
+        if (other == null) {
+            ai.onEnter(x + mx, y + my, world.tile(x + mx, y + my));
+        } else {
+            attack(other);
+        }
     }
 
+    public int getCredits(){
+        return credits;
+    }
+
+    public void earnCredits(Creature c){
+        this.credits += c.getCredits();
+    }
+
+    public void attack(Creature other) {
+        System.out.println(1);
+        this.Hp -= other.attackValue;
+        other.Hp -= this.attackValue;
+        System.out.println(this.hp() + " " + other.hp());
+        if(this.Hp <= 0){
+            other.earnCredits(this);
+        }
+        else if(other.Hp <= 0){
+            this.earnCredits(other);
+        }
+        world.updateAll();
+    }
 
 
     public void update() {
         this.ai.onUpdate();
     }
 
+    public boolean isDead(){return Hp <= 0;}
 
-    public Creature(char glyph, Color color) {
+    public Creature(int Hp,int attackValue,char glyph, Color color,int credits) {
+        this.Hp = Hp;
         this.glyph = glyph;
         this.color = color;
+        this.credits = credits;
+        this.attackValue = attackValue;
     }
 
     public void setWorld(World world) {
         this.world = world;
+    }
+
+    public void route(){
+        ai.route();
     }
 
 }

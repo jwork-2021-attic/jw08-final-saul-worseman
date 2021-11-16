@@ -76,20 +76,41 @@ public class World {
         do {
             x = (int) (Math.random() * this.width);
             y = (int) (Math.random() * this.height);
-        } while (!tile(x, y).isGround() || this.creature(x, y) != null);
+        } while (!tile(x, y).isGround() || creature(x, y) != null);
 
         creature.setX(x);
         creature.setY(y);
         this.creatures.add(creature);
     }
 
-    public synchronized  Creature creature(int x, int y){
-        Iterator<Creature> it = creatures.iterator();
-        while(it.hasNext()){
-            if(it.next().x() == x && it.next().y() == y)
-                return it.next();
+    public Creature creature(int x, int y){
+        synchronized (this) {
+           for(int i = 0; i < creatures.size(); i++){
+               Creature c = creatures.get(i);
+               if(c.x() == x && c.y() == y)
+                   return  creatures.get(i);
+           }
+
+            return null;
         }
-        return null;
+    }
+
+    public synchronized void routeAll(){
+        for(Creature c:creatures)
+            c.route();
+    }
+
+    public synchronized void updateAll(){
+        List<Creature> temp = new ArrayList<>();
+        for(Creature c:creatures){
+            if(!c.isDead())
+                temp.add(c);
+        }
+        creatures = temp;
+    }
+
+    public void registerPlayer(Creature p){
+        creatures.add(p);
     }
 
     public List<Creature> getCreatures(){

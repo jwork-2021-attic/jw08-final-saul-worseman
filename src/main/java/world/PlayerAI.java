@@ -39,15 +39,6 @@ public class PlayerAI extends CreatureAI {
     }
 
     public void route(){
-        int[][] directions = {{0, 1},{0, -1},{1, 0},{-1, 0}};
-        for(int i = 0; i < 4; i++){
-            int tempX = creature.x() + directions[i][0];
-            int tempY = creature.y() + directions[i][1];
-            if(creature.world.tile(tempX, tempY) == Tile.PATH && !memory[tempX][tempY]){
-                onEnter(tempX, tempY, creature.world.tile(tempX, tempY));
-                memory[tempX][tempY] = true;
-                break;
-            }
-        }
+
     }
 }

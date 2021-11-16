@@ -3,7 +3,6 @@ package world;
 import java.util.concurrent.TimeUnit;
 
 public class GodThread extends Thread {
-    private int i = 10;
     private World world;
     private CreatureFactory factory;
     public GodThread(World world){
@@ -12,13 +11,15 @@ public class GodThread extends Thread {
     }
 
     public void run(){
-        while(i > 0){
+        while(true){
             try {
                 TimeUnit.MILLISECONDS.sleep(1000);
                 Creature c = factory.newFungus();
+                c.setWorld(world);
                 world.addAtEmptyLocation(c);
-                System.out.println(i);
-                i--;
+                world.routeAll();
+                world.updateAll();
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

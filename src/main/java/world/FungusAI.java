@@ -22,11 +22,21 @@ package world;
  * @author Winterstorm
  */
 public class FungusAI extends CreatureAI {
-
-
-    public FungusAI(Creature creature, CreatureFactory factory) {
+    public FungusAI(Creature creature) {
         super(creature);
     }
 
+    @Override
+    public synchronized void route(){
+        int[][] directions = new int[][]{{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
+        int dice = (int)(Math.random() * 4);
+        creature.moveBy(directions[dice][0], directions[dice][1]);
+    }
 
+    public void onEnter(int x, int y, Tile tile) {
+        if (tile.isGround()) {
+            creature.setX(x);
+            creature.setY(y);
+        }
+    }
 }

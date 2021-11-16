@@ -32,15 +32,10 @@ public class CreatureFactory {
 
     }
 
-    public Creature newPlayer(List<String> messages) {
-        Creature player = new Creature((char)2, AsciiPanel.brightWhite);
-        new PlayerAI(player);
-        return player;
-    }
 
     public Creature newFungus() {
-        Creature fungus = new Creature((char)3, AsciiPanel.green);
-        new FungusAI(fungus, this);
+        Creature fungus = new Creature(1,1,(char)3, AsciiPanel.green,2);
+        new FungusAI(fungus);
         return fungus;
     }
 }

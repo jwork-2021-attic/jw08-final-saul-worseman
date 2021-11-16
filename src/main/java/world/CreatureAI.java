@@ -31,12 +31,15 @@ class CreatureAI {
     }
 
     public void onEnter(int x, int y, Tile tile) {
+
     }
 
     public void onUpdate() {
     }
 
     public void route(){
+
     }
+
 
 }

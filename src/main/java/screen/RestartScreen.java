@@ -31,6 +31,11 @@ public abstract class RestartScreen implements Screen {
     public abstract void displayOutput(AsciiPanel terminal);
 
     @Override
+    public Screen nextFrame(){
+        return this;
+    }
+
+    @Override
     public Screen respondToUserInput(KeyEvent key) {
         switch (key.getKeyCode()) {
             case KeyEvent.VK_ENTER:
