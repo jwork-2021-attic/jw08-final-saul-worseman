@@ -41,5 +41,9 @@ class CreatureAI {
 
     }
 
+    public void revive(){
+
+    }
+
 
 }

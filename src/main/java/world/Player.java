@@ -33,15 +33,19 @@ public class Player extends Creature {
         setY(1);
     }
 
-    public void revive(){
-        player = new Player();
-    }
-
     public static Player getPlayer(){
         return player;
     }
 
+    public int hp(){
+        return this.Hp;
+    }
 
+    public int getCredits(){
+        return this.getCredits();
+    }
 
-
+    public void revive(){
+        player = new Player();
+    }
 }

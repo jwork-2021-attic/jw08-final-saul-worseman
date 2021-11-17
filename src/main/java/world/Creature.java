@@ -28,6 +28,7 @@ import java.awt.*;
 public class Creature {
 
     private int Hp;
+    private int maxHp;
     protected World world;
 
     private int credits;
@@ -110,8 +111,9 @@ public class Creature {
 
     public boolean isDead(){return Hp <= 0;}
 
-    public Creature(int Hp,int attackValue,char glyph, Color color,int credits) {
-        this.Hp = Hp;
+    public Creature(int maxHp,int attackValue,char glyph, Color color,int credits) {
+        this.Hp = maxHp;
+        this.maxHp = maxHp;
         this.glyph = glyph;
         this.color = color;
         this.credits = credits;
@@ -124,6 +126,11 @@ public class Creature {
 
     public void route(){
         ai.route();
+    }
+
+    public void reset(){
+        credits = 0;
+        Hp = maxHp;
     }
 
 }
