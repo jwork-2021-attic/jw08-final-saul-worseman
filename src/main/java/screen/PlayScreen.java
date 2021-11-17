@@ -34,7 +34,7 @@ import java.util.List;
 public class PlayScreen implements Screen {
     public final static int DIM = 49;
     private World world;
-    private Player player;
+    private Creature player;
     private int screenWidth;
     private int screenHeight;
     private GodThread god;
@@ -53,7 +53,6 @@ public class PlayScreen implements Screen {
 
     private void createPlayer() {
         this.player = Player.getPlayer();
-        player.revive();
         player.setWorld(world);
         new PlayerAI(player);
     }
@@ -111,8 +110,10 @@ public class PlayScreen implements Screen {
     public Screen nextFrame(){
         if(player.hp() <= 0)
             return new LoseScreen();
-        else if(player.getCredits()>= 10)
+        else if(player.getCredits()>= 10) {
+            player.revive();
             return new WinScreen();
+        }
         else
             return this;
     }

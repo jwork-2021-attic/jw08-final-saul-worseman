@@ -38,11 +38,11 @@ public class Player extends Creature {
     }
 
     public int hp(){
-        return this.Hp;
+        return super.hp();
     }
 
     public int getCredits(){
-        return this.getCredits();
+        return super.getCredits();
     }
 
     public void revive(){

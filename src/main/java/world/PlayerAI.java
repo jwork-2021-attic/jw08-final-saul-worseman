@@ -42,4 +42,11 @@ public class PlayerAI extends CreatureAI {
 
     }
 
+    public void revive(){
+        creature.setX(1);
+        creature.setY(1);
+        if(creature.getCredits() >= 10)
+            creature.reset();
+    }
+
 }

@@ -34,7 +34,9 @@ public class Creature {
     private int credits;
     private int x;
 
-    public int hp(){return Hp;}
+    public int hp(){
+        return Hp;
+    }
     public void setX(int x) {
         this.x = x;
     }
@@ -109,7 +111,9 @@ public class Creature {
         this.ai.onUpdate();
     }
 
-    public boolean isDead(){return Hp <= 0;}
+    public boolean isDead(){
+        return Hp <= 0;
+    }
 
     public Creature(int maxHp,int attackValue,char glyph, Color color,int credits) {
         this.Hp = maxHp;
@@ -131,6 +135,9 @@ public class Creature {
     public void reset(){
         credits = 0;
         Hp = maxHp;
+    }
+    public void revive(){
+        ai.revive();
     }
 
 }
