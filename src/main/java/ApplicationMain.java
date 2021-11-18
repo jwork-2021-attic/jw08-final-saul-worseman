@@ -44,7 +44,7 @@ public class ApplicationMain extends JFrame implements KeyListener {
         screen = new StartScreen();
         addKeyListener(this);
         repaint();
-        Thread refreshTheard = new Thread(()->{
+        Thread refreshThread = new Thread(()->{
             while(true){
                 try {
                     screen = screen.nextFrame();
@@ -55,7 +55,7 @@ public class ApplicationMain extends JFrame implements KeyListener {
                 }
             }
         });
-        refreshTheard.start();
+        refreshThread.start();
     }
 
     @Override

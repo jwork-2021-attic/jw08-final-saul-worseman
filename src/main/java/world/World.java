@@ -4,6 +4,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /*
  * Copyright (C) 2015 Aeranythe Echosong
@@ -33,6 +35,7 @@ public class World {
     private int width;
     private int height;
     private List<Creature> creatures;
+    private Lock lock = new ReentrantLock();
 
     public World(Tile[][] tiles) {
         this.tiles = tiles;
@@ -81,6 +84,8 @@ public class World {
         creature.setX(x);
         creature.setY(y);
         this.creatures.add(creature);
+        lock.lock();
+        lock.unlock();
     }
 
     public Creature creature(int x, int y){
@@ -93,11 +98,6 @@ public class World {
 
             return null;
         }
-    }
-
-    public synchronized void routeAll(){
-        for(Creature c:creatures)
-            c.route();
     }
 
     public synchronized void updateAll(){
@@ -114,6 +114,22 @@ public class World {
     }
 
     public List<Creature> getCreatures(){
+        lock.lock();
         return creatures;
     }
+
+    public void unlockWorld(){
+        lock.unlock();
+    }
+
+
+    public void randomBecomeLava(){
+        int i = (int)(Math.random() * (width - 2)) + 2;
+        int j = (int)(Math.random() * (width - 2)) + 2;
+        if(!tile(i,j).isDoor() && tile(i,j).isGround())
+            setTile(i,j,Tile.LAVA);
+    }
+
+
+
 }

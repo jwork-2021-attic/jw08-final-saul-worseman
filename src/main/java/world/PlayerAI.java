@@ -34,7 +34,6 @@ public class PlayerAI extends CreatureAI {
         if (tile.isGround()) {
             creature.setX(x);
             creature.setY(y);
-            creature.world.setTile(x,y, Tile.VISITED) ;
         }
     }
 

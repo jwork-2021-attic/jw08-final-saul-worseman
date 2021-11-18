@@ -17,7 +17,9 @@ public class GodThread extends Thread {
                 Creature c = factory.newFungus();
                 c.setWorld(world);
                 world.addAtEmptyLocation(c);
-                world.routeAll();
+                world.randomBecomeLava();
+                //world.routeAll();
+                c.start();
                 world.updateAll();
 
             } catch (InterruptedException e) {

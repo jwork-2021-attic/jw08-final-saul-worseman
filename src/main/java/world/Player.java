@@ -19,6 +19,8 @@ package world;
 
 import asciiPanel.AsciiPanel;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  *
  * @author Aeranythe Echosong
@@ -44,6 +46,22 @@ public class Player extends Creature {
     public int getCredits(){
         return super.getCredits();
     }
+
+    @Override
+    public void run(){
+        while(true) {
+            try {
+                TimeUnit.MILLISECONDS.sleep(1000);
+                lock.lock();
+                if (world.tile(this.x(), this.y()) == Tile.LAVA)
+                    this.Hp -= 10;
+                lock.unlock();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     public void revive(){
         player = new Player();

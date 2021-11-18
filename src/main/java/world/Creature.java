@@ -20,16 +20,21 @@ package world;
 import screen.Screen;
 
 import java.awt.*;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  *
  * @author Aeranythe Echosong
  */
-public class Creature {
+public class Creature extends Thread{
 
-    private int Hp;
-    private int maxHp;
+    protected int Hp;
+    protected int maxHp;
     protected World world;
+    private int attackValue;
+    protected static Lock lock = new ReentrantLock();
 
     private int credits;
     private int x;
@@ -47,7 +52,7 @@ public class Creature {
 
     private int y;
 
-    private int attackValue;
+
 
     public void setY(int y) {
         this.y = y;
@@ -76,11 +81,19 @@ public class Creature {
     }
 
     public void moveBy(int mx, int my) {
-        Creature other = world.creature(x + mx, y + my);
-        if (other == null) {
-            ai.onEnter(x + mx, y + my, world.tile(x + mx, y + my));
-        } else {
-            attack(other);
+        //TODO a lock!
+        //These creatures must share one lock, thus they must be init by the exactly one lock, which can be a static one
+        try{
+            lock.lock();
+            Creature other = world.creature(x + mx, y + my);
+            if (other == null) {
+                ai.onEnter(x + mx, y + my, world.tile(x + mx, y + my));
+                }
+            else {
+                attack(other);
+                }
+            }finally{
+            lock.unlock();
         }
     }
 
@@ -93,7 +106,6 @@ public class Creature {
     }
 
     public void attack(Creature other) {
-        System.out.println(1);
         this.Hp -= other.attackValue;
         other.Hp -= this.attackValue;
         System.out.println(this.hp() + " " + other.hp());
@@ -138,6 +150,27 @@ public class Creature {
     }
     public void revive(){
         ai.revive();
+    }
+
+    public void run(){
+        while(!isDead()){
+            try {
+                TimeUnit.MILLISECONDS.sleep(1000);
+                try{
+                    lock.lock();
+                    if(!isDead())
+                        route();
+                    else
+                        break;
+                }finally {
+                    lock.unlock();
+                }
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
 }

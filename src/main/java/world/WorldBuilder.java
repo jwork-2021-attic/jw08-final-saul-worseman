@@ -58,6 +58,7 @@ public class WorldBuilder {
                 }
             }
         }
+        tiles[row - 2][col - 2] = Tile.DOOR;
         return this;
     }
 

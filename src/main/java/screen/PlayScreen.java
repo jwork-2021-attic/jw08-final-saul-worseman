@@ -26,6 +26,8 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  *
@@ -39,6 +41,7 @@ public class PlayScreen implements Screen {
     private int screenHeight;
     private GodThread god;
     private Messages messages;
+
     public PlayScreen() {
 
         this.screenWidth = DIM;
@@ -49,12 +52,14 @@ public class PlayScreen implements Screen {
         messages = new Messages(DIM,0,30);
         god = new GodThread(this.world);
         god.start();
+        player.start();
     }
 
     private void createPlayer() {
         this.player = Player.getPlayer();
         player.setWorld(world);
         new PlayerAI(player);
+
     }
 
     private void createWorld() {
@@ -71,9 +76,11 @@ public class PlayScreen implements Screen {
                 terminal.write(world.glyph(wx, wy), x, y, world.color(wx, wy));
             }
         }
-        for (Creature creature : world.getCreatures()){
+        List<Creature> creatures = world.getCreatures();
+        for (Creature creature : creatures){
             terminal.write(creature.glyph(), creature.x(), creature.y(), creature.color());
         }
+        world.unlockWorld();
     }
 
 
@@ -108,8 +115,10 @@ public class PlayScreen implements Screen {
     }
 
     public Screen nextFrame(){
-        if(player.hp() <= 0)
+        if(player.hp() <= 0) {
+            player.revive();
             return new LoseScreen();
+        }
         else if(player.getCredits()>= 10) {
             player.revive();
             return new WinScreen();
