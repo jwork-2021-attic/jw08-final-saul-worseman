@@ -55,13 +55,15 @@ public class PlayScreen implements Screen {
         player.start();
     }
 
+    public static int level(){return level;}
+
     private void createPlayer() {
         this.player = Player.getPlayer();
         player.setWorld(world);
         new PlayerAI(player);
     }
 
-    public int target(){
+    public static int target(){
         int res = 0;
         for(int i = 1; i <= level; i++){
             res += i * 5;

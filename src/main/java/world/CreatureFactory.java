@@ -38,4 +38,10 @@ public class CreatureFactory {
         new FungusAI(fungus);
         return fungus;
     }
+
+    public Creature newHunter(){
+        Creature hunter= new Creature(200,40,(char)2, AsciiPanel.blue,100);
+        new HunterAI(hunter);
+        return hunter;
+    }
 }

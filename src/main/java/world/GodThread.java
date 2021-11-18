@@ -9,12 +9,16 @@ public class GodThread extends Thread {
         this.world = world;
         factory = new CreatureFactory();
     }
+    int count = 0;
 
     public void run(){
         while(true){
             try {
+                count++;
                 TimeUnit.MILLISECONDS.sleep(1000);
                 Creature c = factory.newFungus();
+                if(count % 3 == 0)
+                    c = factory.newHunter();
                 c.setWorld(world);
                 world.addAtEmptyLocation(c);
                 world.randomBecomeLava();

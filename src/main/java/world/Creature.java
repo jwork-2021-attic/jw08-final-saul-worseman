@@ -155,7 +155,7 @@ public class Creature extends Thread{
     public void run(){
         while(!isDead()){
             try {
-                TimeUnit.MILLISECONDS.sleep(1000);
+                TimeUnit.MILLISECONDS.sleep(200);
                 try{
                     lock.lock();
                     if(!isDead())
