@@ -36,14 +36,14 @@ import java.util.concurrent.locks.ReentrantLock;
 public class PlayScreen implements Screen {
     public final static int DIM = 49;
     private World world;
-    private Creature player;
+    private Player player;
     private int screenWidth;
     private int screenHeight;
     private GodThread god;
     private Messages messages;
+    private static int level = 1;
 
     public PlayScreen() {
-
         this.screenWidth = DIM;
         this.screenHeight = DIM;
         createWorld();
@@ -59,7 +59,14 @@ public class PlayScreen implements Screen {
         this.player = Player.getPlayer();
         player.setWorld(world);
         new PlayerAI(player);
+    }
 
+    public int target(){
+        int res = 0;
+        for(int i = 1; i <= level; i++){
+            res += i * 5;
+        }
+        return res;
     }
 
     private void createWorld() {
@@ -119,9 +126,14 @@ public class PlayScreen implements Screen {
             player.revive();
             return new LoseScreen();
         }
-        else if(player.getCredits()>= 10) {
+        else if(player.getCredits()>= target() && level == 3 && player.readyForNextLevel()) {
             player.revive();
             return new WinScreen();
+        }
+        else if(player.getCredits()>= target() && player.readyForNextLevel()){
+            PlayScreen.level ++;
+            player.revive();
+            return new PlayScreen();
         }
         else
             return this;

@@ -33,6 +33,7 @@ public class FungusAI extends CreatureAI {
         creature.moveBy(directions[dice][0], directions[dice][1]);
     }
 
+    @Override
     public void onEnter(int x, int y, Tile tile) {
         if (tile.isGround()) {
             creature.setX(x);

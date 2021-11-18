@@ -34,6 +34,7 @@ public class Player extends Creature {
         setX(1);
         setY(1);
     }
+    private boolean ready = false;
 
     public static Player getPlayer(){
         return player;
@@ -47,11 +48,19 @@ public class Player extends Creature {
         return super.getCredits();
     }
 
+    public boolean readyForNextLevel(){
+        return ready;
+    }
+
     @Override
     public void run(){
         while(true) {
             try {
-                TimeUnit.MILLISECONDS.sleep(1000);
+                TimeUnit.MILLISECONDS.sleep(200);
+                if(world.tile(this.x(), this.y()) == Tile.DOOR)
+                    ready = true;
+                else
+                    ready = false;
                 lock.lock();
                 if (world.tile(this.x(), this.y()) == Tile.LAVA)
                     this.Hp -= 10;
