@@ -30,7 +30,7 @@ public class Player extends Creature {
     private static Player player = new Player();
 
     private Player(){
-        super(100,2,(char)2, AsciiPanel.brightWhite,0);
+        super(100,20,(char)2, AsciiPanel.brightWhite,0);
         setX(1);
         setY(1);
     }

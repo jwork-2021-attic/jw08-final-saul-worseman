@@ -1,5 +1,7 @@
 package world;
 
+import asciiPanel.AsciiPanel;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -24,7 +26,7 @@ public class HunterAI extends CreatureAI{
         for (int i = 0; i < creature.world.width(); i++){
             Arrays.fill(visited[i],false);
         }
-        System.out.println(preyX + " " + preyY);
+        //System.out.println(preyX + " " + preyY);
         queue.offer(new int[]{preyX, preyY});
         visited[preyX][preyY] = true;
         while(!queue.isEmpty()){
@@ -39,7 +41,6 @@ public class HunterAI extends CreatureAI{
                     return;
                 }
                 else if(x < 48 && x > 0 && y < 48 && y > 0 && (t == Tile.PATH || t == Tile.LAVA)){
-                    System.out.println(x + " " + y);
                     if(visited[x][y] == false){
                         queue.add(new int[]{x,y});
                         visited[x][y] = true;
@@ -62,8 +63,11 @@ public class HunterAI extends CreatureAI{
         preyY = prey.y();
         bfs();
         creature.moveBy(nextStep[0] - creature.x(), nextStep[1] - creature.y());
-        creature.setHp(creature.Hp - 4);
-        if(creature.isDead() == true)
-            Player.getPlayer().earnCredits(creature);
+        if(creature.Hp > 2)
+            creature.setHp(creature.Hp - 4);
+        if(creature.Hp < 10)
+            creature.setColor(AsciiPanel.brightYellow);
+        if(creature.getAttackValue() >= 2)
+            creature.setAttackValue(creature.getAttackValue() - 2);
     }
 }

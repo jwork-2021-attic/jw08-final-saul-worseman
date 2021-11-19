@@ -74,7 +74,13 @@ public class Creature extends Thread{
         return this.color;
     }
 
+    public void setColor(Color color){this.color = color;}
+
     private CreatureAI ai;
+
+    public void setAttackValue(int val){this.attackValue = val;}
+
+    public int getAttackValue(){return attackValue;}
 
     public void setAI(CreatureAI ai) {
         this.ai = ai;
