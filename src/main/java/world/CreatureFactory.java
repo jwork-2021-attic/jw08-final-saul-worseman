@@ -40,7 +40,7 @@ public class CreatureFactory {
     }
 
     public Creature newHunter(){
-        Creature hunter= new Creature(200,40,(char)2, AsciiPanel.blue,100);
+        Creature hunter= new Creature(200,40,(char)2, AsciiPanel.brightRed,100);
         new HunterAI(hunter);
         return hunter;
     }

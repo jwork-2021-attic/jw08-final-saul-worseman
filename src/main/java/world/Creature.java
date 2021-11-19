@@ -81,8 +81,6 @@ public class Creature extends Thread{
     }
 
     public void moveBy(int mx, int my) {
-        //TODO a lock!
-        //These creatures must share one lock, thus they must be init by the exactly one lock, which can be a static one
         try{
             lock.lock();
             Creature other = world.creature(x + mx, y + my);
@@ -99,6 +97,10 @@ public class Creature extends Thread{
 
     public int getCredits(){
         return credits;
+    }
+
+    public void setHp(int newHp){
+        Hp = newHp;
     }
 
     public void earnCredits(Creature c){
@@ -169,7 +171,6 @@ public class Creature extends Thread{
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
         }
     }
 

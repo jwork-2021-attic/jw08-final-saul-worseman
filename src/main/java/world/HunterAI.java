@@ -1,32 +1,32 @@
 package world;
 
 import java.util.Arrays;
-import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class HunterAI extends CreatureAI{
 
 
-    private Creature preyer = Player.getPlayer();
-    private int preyerX;
-    private int preyerY;
+    private Creature prey = Player.getPlayer();
+    private int preyX;
+    private int preyY;
     private int[][] directions = new int[][]{{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
     public int nextStep[] = new int[2];
     private boolean visited[][];
     public HunterAI(Creature creature) {
         super(creature);
-        visited = new boolean[50][50];
     }
 
-    Queue<int[]> queue = new LinkedList<int[]>();
+
     private void bfs(){
+        Queue<int[]> queue = new LinkedList<int[]>();
+        visited = new boolean[creature.world.width()][creature.world.width()];
         for (int i = 0; i < creature.world.width(); i++){
             Arrays.fill(visited[i],false);
         }
-        System.out.println(preyerX + " " + preyerY);
-        queue.offer(new int[]{preyerX,preyerY});
-        visited[preyerX][preyerY] = true;
+        System.out.println(preyX + " " + preyY);
+        queue.offer(new int[]{preyX, preyY});
+        visited[preyX][preyY] = true;
         while(!queue.isEmpty()){
             int[] tuple = queue.poll();
             for(int i = 0; i < 4; i++){
@@ -58,10 +58,12 @@ public class HunterAI extends CreatureAI{
 
     @Override
     public void route(){
-        preyerX = preyer.x();
-        preyerY = preyer.y();
+        preyX = prey.x();
+        preyY = prey.y();
         bfs();
         creature.moveBy(nextStep[0] - creature.x(), nextStep[1] - creature.y());
-        System.out.println(1);
+        creature.setHp(creature.Hp - 4);
+        if(creature.isDead() == true)
+            Player.getPlayer().earnCredits(creature);
     }
 }

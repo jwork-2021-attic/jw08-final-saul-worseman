@@ -17,14 +17,16 @@ public class GodThread extends Thread {
                 count++;
                 TimeUnit.MILLISECONDS.sleep(1000);
                 Creature c = factory.newFungus();
-                if(count % 3 == 0)
+                if(count  % 5 == 0){
                     c = factory.newHunter();
+                }
                 c.setWorld(world);
                 world.addAtEmptyLocation(c);
                 world.randomBecomeLava();
                 //world.routeAll();
                 c.start();
                 world.updateAll();
+
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
