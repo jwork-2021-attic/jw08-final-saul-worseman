@@ -130,6 +130,14 @@ public class World {
             setTile(i,j,Tile.LAVA);
     }
 
+    public void end(){
+        lock.lock();
+        for(Creature c: creatures){
+            c.setHp(0);
+        }
+        lock.unlock();
+    }
+
 
 
 }

@@ -125,14 +125,20 @@ public class PlayScreen implements Screen {
 
     public Screen nextFrame(){
         if(player.hp() <= 0) {
+            god.stop();
+            world.end();
             player.revive();
             return new LoseScreen();
         }
         else if(player.getCredits()>= target() && level == 3 && player.readyForNextLevel()) {
+            god.stop();
+            world.end();
             player.revive();
             return new WinScreen();
         }
         else if(player.getCredits()>= target() && player.readyForNextLevel()){
+            god.stop();
+            world.end();
             PlayScreen.level ++;
             player.revive();
             return new PlayScreen();
