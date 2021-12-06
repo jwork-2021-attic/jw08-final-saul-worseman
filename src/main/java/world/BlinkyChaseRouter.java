@@ -65,8 +65,6 @@ public class HunterAI extends CreatureAI{
         creature.moveBy(nextStep[0] - creature.x(), nextStep[1] - creature.y());
         if(creature.Hp > 2)
             creature.setHp(creature.Hp - 4);
-        if(creature.Hp < 10)
-            creature.setColor(AsciiPanel.brightYellow);
        if(creature.isDead() && !Player.getPlayer().isDead())
            Player.getPlayer().earnCredits(creature);
     }
