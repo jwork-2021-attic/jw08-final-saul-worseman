@@ -34,14 +34,26 @@ class CreatureAI {
 
     }
 
-    public void onUpdate() {
-    }
+
 
     public void route(){
 
     }
 
     public void revive(){
+
+    }
+
+    public void setDirection(int dir){
+
+    }
+
+    public int getDirection(){
+        return 0;
+    }
+
+
+    public void attack(Creature creature){
 
     }
 

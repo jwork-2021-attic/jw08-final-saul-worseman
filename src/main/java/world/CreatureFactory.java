@@ -17,10 +17,6 @@
  */
 package world;
 
-import asciiPanel.AsciiPanel;
-
-import java.util.List;
-
 /**
  *
  * @author Aeranythe Echosong
@@ -32,16 +28,22 @@ public class CreatureFactory {
 
     }
 
-
-    public Creature newFungus() {
-        Creature fungus = new Creature(1,1,(char)3, AsciiPanel.green,2);
-        new FungusAI(fungus);
-        return fungus;
+    public Creature newCoin(){
+        Creature coin = new Creature(1, (char) 144,1,0);
+        new CoinAI(coin);
+        return coin;
     }
 
-    public Creature newHunter(){
-        Creature hunter= new Creature(200,40,(char)2, AsciiPanel.brightRed,100);
-        new HunterAI(hunter);
-        return hunter;
+
+    public Creature newBlinky(){
+        Creature blinky= new Creature(200, (char)186, 200,2);
+        new BlinkyAI(blinky);
+        return blinky;
+    }
+
+    public Creature newPinky(){
+        Creature pinky= new Creature(200, (char)166, 200,2);
+        new PinkyAI(pinky);
+        return pinky;
     }
 }

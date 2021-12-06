@@ -123,13 +123,6 @@ public class World {
     }
 
 
-    public void randomBecomeLava(){
-        int i = (int)(Math.random() * (width - 2)) + 2;
-        int j = (int)(Math.random() * (width - 2)) + 2;
-        if(!tile(i,j).isDoor() && tile(i,j).isGround())
-            setTile(i,j,Tile.LAVA);
-    }
-
     public void end(){
         lock.lock();
         for(Creature c: creatures){

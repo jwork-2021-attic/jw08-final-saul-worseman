@@ -322,8 +322,8 @@ public class AsciiPanel extends JPanel {
     public AsciiPanel(int width, int height, AsciiFont font) {
         super();
 
-        if (width < 1) {
-            throw new IllegalArgumentException("width " + width + " must be greater than 0.");
+            if (width < 1) {
+                throw new IllegalArgumentException("width " + width + " must be greater than 0.");
         }
 
         if (height < 1) {
@@ -333,8 +333,8 @@ public class AsciiPanel extends JPanel {
         widthInCharacters = width;
         heightInCharacters = height;
 
-        defaultBackgroundColor = black;
-        defaultForegroundColor = white;
+        defaultBackgroundColor = white;
+        defaultForegroundColor = black;
 
         chars = new char[widthInCharacters][heightInCharacters];
         backgroundColors = new Color[widthInCharacters][heightInCharacters];
@@ -370,7 +370,7 @@ public class AsciiPanel extends JPanel {
 
                 LookupOp op = setColors(bg, fg);
                 BufferedImage img = op.filter(glyphs[chars[x][y]], null);
-                offscreenGraphics.drawImage(img, x * charWidth, y * charHeight, null);
+                offscreenGraphics.drawImage(glyphs[chars[x][y]], x * charWidth, y * charHeight, null);
 
                 oldBackgroundColors[x][y] = backgroundColors[x][y];
                 oldForegroundColors[x][y] = foregroundColors[x][y];

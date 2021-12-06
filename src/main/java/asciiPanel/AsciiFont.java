@@ -18,6 +18,9 @@ public class AsciiFont {
     public static final AsciiFont TAFFER_10x10 = new AsciiFont("taffer_10x10.png", 10, 10);
     public static final AsciiFont QBICFEET_10x10 = new AsciiFont("qbicfeet_10x10.png", 10, 10);
     public static final AsciiFont TALRYTH_15_15 = new AsciiFont("talryth_square_15x15.png", 15, 15);
+    public static final AsciiFont img = new AsciiFont("img.png",30,30);
+    public static final AsciiFont img1 = new AsciiFont("tiles.png",16,16);
+    public static final AsciiFont img2 = new AsciiFont("black.png",20,20);
 
     private String fontFilename;
 

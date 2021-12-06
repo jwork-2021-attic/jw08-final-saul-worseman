@@ -17,8 +17,6 @@
  */
 package world;
 
-import asciiPanel.AsciiPanel;
-
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,19 +26,27 @@ import java.util.concurrent.TimeUnit;
 public class Player extends Creature {
 
     private static Player player = new Player();
-
+    private boolean cheat;
     private Player(){
-        super(100,20,(char)2, AsciiPanel.brightWhite,0);
+        super(3, (char)224, 0,1);
         setX(1);
         setY(1);
+        cheat = true;
     }
     private boolean ready = false;
+
 
     public static Player getPlayer(){
         return player;
     }
 
+    public void setCheat(){
+        cheat = !cheat;
+    }
+
     public int hp(){
+        if(cheat == true)
+            return 4;
         return super.hp();
     }
 
@@ -56,19 +62,20 @@ public class Player extends Creature {
     public void run(){
         while(true) {
             try {
-                TimeUnit.MILLISECONDS.sleep(200);
+                TimeUnit.MILLISECONDS.sleep(100);
+                route();
                 if(world.tile(this.x(), this.y()) == Tile.DOOR)
                     ready = true;
                 else
                     ready = false;
-                lock.lock();
-                if (world.tile(this.x(), this.y()) == Tile.LAVA)
-                    this.Hp -= 10;
-                lock.unlock();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    public int getDir(){
+        return player.dir;
     }
 
 

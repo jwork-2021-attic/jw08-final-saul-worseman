@@ -17,8 +17,6 @@
  */
 package world;
 
-import screen.Screen;
-
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -33,10 +31,11 @@ public class Creature extends Thread{
     protected int Hp;
     protected int maxHp;
     protected World world;
-    private int attackValue;
     protected static Lock lock = new ReentrantLock();
 
+    private int attackValue;
     private int credits;
+    protected int dir;
     private int x;
 
     public int hp(){
@@ -52,8 +51,6 @@ public class Creature extends Thread{
 
     private int y;
 
-
-
     public void setY(int y) {
         this.y = y;
     }
@@ -68,19 +65,12 @@ public class Creature extends Thread{
         return this.glyph;
     }
 
-    private Color color;
-
-    public Color color() {
-        return this.color;
+    public void setGlyph(char glyph){
+        this.glyph = glyph;
     }
 
-    public void setColor(Color color){this.color = color;}
 
     private CreatureAI ai;
-
-    public void setAttackValue(int val){this.attackValue = val;}
-
-    public int getAttackValue(){return attackValue;}
 
     public void setAI(CreatureAI ai) {
         this.ai = ai;
@@ -114,35 +104,23 @@ public class Creature extends Thread{
     }
 
     public void attack(Creature other) {
-        this.Hp -= other.attackValue;
-        other.Hp -= this.attackValue;
-        System.out.println(this.hp() + " " + other.hp());
-        if(this.Hp <= 0){
-            other.earnCredits(this);
-        }
-        else if(other.Hp <= 0){
-            this.earnCredits(other);
-        }
-        world.updateAll();
+        ai.attack(other);
     }
 
 
-    public void update() {
-        this.ai.onUpdate();
-    }
 
     public boolean isDead(){
         return Hp <= 0;
     }
 
-    public Creature(int maxHp,int attackValue,char glyph, Color color,int credits) {
+    public Creature(int maxHp, char glyph, int credits, int attckValue) {
         this.Hp = maxHp;
         this.maxHp = maxHp;
         this.glyph = glyph;
-        this.color = color;
         this.credits = credits;
-        this.attackValue = attackValue;
+        this.attackValue = attckValue;
     }
+
 
     public void setWorld(World world) {
         this.world = world;
@@ -160,24 +138,34 @@ public class Creature extends Thread{
         ai.revive();
     }
 
+    public void setDirection(int dir){
+        ai.setDirection(dir);
+    }
+
+    public int getDirection(){
+        return ai.getDirection();
+    }
+
     public void run(){
         while(!isDead()){
             try {
                 TimeUnit.MILLISECONDS.sleep(200);
                 try{
-                    lock.lock();
+                    //lock.lock();
                     if(!isDead())
                         route();
                     else
                         break;
                 }finally {
-                    lock.unlock();
+                    //lock.unlock();
                 }
-
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
+
+
+
 
 }

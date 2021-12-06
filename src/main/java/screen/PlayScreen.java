@@ -39,19 +39,30 @@ public class PlayScreen implements Screen {
     private Player player;
     private int screenWidth;
     private int screenHeight;
-    private GodThread god;
     private Messages messages;
     private static int level = 1;
+    private CreatureFactory creatureFactory = new CreatureFactory();
 
     public PlayScreen() {
         this.screenWidth = DIM;
         this.screenHeight = DIM;
         createWorld();
         createPlayer();
+        Creature c = creatureFactory.newCoin();
+        c.setWorld(world);
+        world.addAtEmptyLocation(c);
+        c.start();
+        c = creatureFactory.newBlinky();
+        c.setWorld(world);
+        world.addAtEmptyLocation(c);
+        c.start();
+        world.registerPlayer(player);
+        c = creatureFactory.newPinky();
+        c.setWorld(world);
+        world.addAtEmptyLocation(c);
+        c.start();
         world.registerPlayer(player);
         messages = new Messages(DIM,0,30);
-        god = new GodThread(this.world);
-        god.start();
         player.start();
     }
 
@@ -87,7 +98,7 @@ public class PlayScreen implements Screen {
         }
         List<Creature> creatures = world.getCreatures();
         for (Creature creature : creatures){
-            terminal.write(creature.glyph(), creature.x(), creature.y(), creature.color());
+            terminal.write(creature.glyph(), creature.x(), creature.y());
         }
         world.unlockWorld();
     }
@@ -98,7 +109,7 @@ public class PlayScreen implements Screen {
         // Terrain and creatures
         displayTiles(terminal);
         // Player
-        terminal.write(player.glyph(), player.x() , player.y() , player.color());
+        terminal.write(player.glyph(), player.x() , player.y());
         // Messages
         messages.display(terminal);
     }
@@ -109,15 +120,19 @@ public class PlayScreen implements Screen {
         switch (key.getKeyCode()) {
             case KeyEvent.VK_LEFT:
                 player.moveBy(-1, 0);
+                player.setDirection(0);
                 break;
             case KeyEvent.VK_RIGHT:
                 player.moveBy(1, 0);
+                player.setDirection(1);
                 break;
             case KeyEvent.VK_UP:
                 player.moveBy(0, -1);
+                player.setDirection(2);
                 break;
             case KeyEvent.VK_DOWN:
                 player.moveBy(0, 1);
+                player.setDirection(3);
                 break;
         }
         return this;
@@ -125,19 +140,16 @@ public class PlayScreen implements Screen {
 
     public Screen nextFrame(){
         if(player.hp() <= 0) {
-            god.stop();
             world.end();
             player.revive();
             return new LoseScreen();
         }
         else if(player.getCredits()>= target() && level == 3 && player.readyForNextLevel()) {
-            god.stop();
             world.end();
             player.revive();
             return new WinScreen();
         }
         else if(player.getCredits()>= target() && player.readyForNextLevel()){
-            god.stop();
             world.end();
             PlayScreen.level ++;
             player.revive();

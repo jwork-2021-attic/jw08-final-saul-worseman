@@ -1,2 +1,5 @@
-package world;public interface Router {
+package world;
+
+public interface Router {
+    public int[] nextSteps();
 }

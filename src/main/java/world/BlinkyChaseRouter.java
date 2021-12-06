@@ -1,22 +1,22 @@
 package world;
 
-import asciiPanel.AsciiPanel;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class HunterAI extends CreatureAI{
+public class BlinkyChaseRouter implements Router{
 
 
     private Creature prey = Player.getPlayer();
     private int preyX;
     private int preyY;
     private int[][] directions = new int[][]{{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
-    public int nextStep[] = new int[2];
+    public int nextPos[] = new int[2];
     private boolean visited[][];
-    public HunterAI(Creature creature) {
-        super(creature);
+    private Creature creature;
+    public BlinkyChaseRouter(Creature creature) {
+        this.creature = creature;
+
     }
 
 
@@ -36,8 +36,8 @@ public class HunterAI extends CreatureAI{
                 int y = tuple[1] + directions[i][1];
                 Tile t = creature.world.tile(x,y);
                 if(x == creature.x() && y == creature.y()){
-                    nextStep[0] = tuple[0];
-                    nextStep[1] = tuple[1];
+                    nextPos[0] = tuple[0];
+                    nextPos[1] = tuple[1];
                     return;
                 }
                 else if(x < 48 && x > 0 && y < 48 && y > 0 && (t == Tile.PATH || t == Tile.LAVA)){
@@ -49,23 +49,13 @@ public class HunterAI extends CreatureAI{
             }
         }
     }
-    @Override
-    public void onEnter(int x, int y, Tile tile) {
-        if (tile.isGround()) {
-            creature.setX(x);
-            creature.setY(y);
-        }
-    }
 
-    @Override
-    public void route(){
+    public int[] nextSteps(){
         preyX = prey.x();
         preyY = prey.y();
         bfs();
-        creature.moveBy(nextStep[0] - creature.x(), nextStep[1] - creature.y());
-        if(creature.Hp > 2)
-            creature.setHp(creature.Hp - 4);
-       if(creature.isDead() && !Player.getPlayer().isDead())
-           Player.getPlayer().earnCredits(creature);
+        return new int[]{nextPos[0] - creature.x(),nextPos[1] - creature.y()};
     }
+
+
 }

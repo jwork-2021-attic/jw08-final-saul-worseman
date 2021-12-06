@@ -27,15 +27,15 @@ import java.awt.*;
  */
 public enum Tile {
 
-    WALL((char) 177, AsciiPanel.brightBlack),
+    WALL((char) 251 ),
 
-    BOUNDS('x', AsciiPanel.magenta),
+    BOUNDS('x'),
 
-    PATH((char) 250, AsciiPanel.green),
+    PATH((char) 202),
 
-    DOOR((char) 8,AsciiPanel.yellow),
+    DOOR((char) 154),
 
-    LAVA((char) 178, AsciiPanel.red);
+    LAVA((char) 178);
 
     private char glyph;
 
@@ -59,6 +59,10 @@ public enum Tile {
     Tile(char glyph, Color color) {
         this.glyph = glyph;
         this.color = color;
+    }
+
+    Tile(char glyph) {
+        this.glyph = glyph;
     }
 
 

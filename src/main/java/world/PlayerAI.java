@@ -23,11 +23,17 @@ package world;
  */
 public class PlayerAI extends CreatureAI {
 
-    private boolean[][] memory;
+
+    private final char[] up = new char[]{240,241,242,243};
+    private final char[] left = new char[]{192,193,194,195};
+    private final char[] right = new char[]{208,209,210,211};
+    private final char[] down = new char[]{224,225,226,227};
+    private int index;
+    private int dir;
     public PlayerAI(Creature creature) {
         super(creature);
-        memory = new boolean[creature.world.width()][creature.world.height()];
-        memory[1][1] = true;
+        dir = 0;
+        index = 0;
     }
 
     public void onEnter(int x, int y, Tile tile) {
@@ -38,7 +44,33 @@ public class PlayerAI extends CreatureAI {
     }
 
     public void route(){
+        index = (index + 1) % up.length;
+        if(dir == 0){
+            creature.setGlyph(left[index]);
+       }
+        else if(dir == 1){
+            creature.setGlyph(right[index]);
+        }
+        else if(dir == 2){
+            creature.setGlyph(up[index]);
+        }
+        else{
+            creature.setGlyph(down[index]);
+        }
+    }
 
+    @Override
+    public void setDirection(int dir){
+        if(this.dir == dir)
+            return;
+        else{
+            this.dir = dir;
+            index = 0;
+        }
+    }
+
+    public int getDirection(){
+        return dir;
     }
 
     public void revive(){
@@ -48,4 +80,15 @@ public class PlayerAI extends CreatureAI {
             creature.reset();
     }
 
+    public void attack(Creature c){
+        c.setHp(c.hp() - 1);
+        if(c.isDead()) {
+            creature.earnCredits(c);
+            creature.world.updateAll();
+        }
+    }
+
+    public int getDir() {
+        return dir;
+    }
 }
