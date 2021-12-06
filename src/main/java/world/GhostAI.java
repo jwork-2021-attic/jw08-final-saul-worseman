@@ -1,6 +1,12 @@
 package world;
 
 public class GhostAI extends CreatureAI{
+
+    protected char up = 187;
+    protected char down = 186;
+    protected char left = 184;
+    protected char right = 185;
+    protected Router router;
     public GhostAI(Creature creature) {
         super(creature);
     }

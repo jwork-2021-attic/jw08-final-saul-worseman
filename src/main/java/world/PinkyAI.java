@@ -1,6 +1,6 @@
 package world;
 
-public class PinkyAI extends CreatureAI{
+public class PinkyAI extends GhostAI{
     private char up = 167;
     private char down = 166;
     private char left = 164;
@@ -9,6 +9,10 @@ public class PinkyAI extends CreatureAI{
 
     public PinkyAI(Creature creature) {
         super(creature);
+        up = 167;
+        down = 166;
+        left = 164;
+        right = 165;
         router = new PinkyChaseRouter(creature);
     }
 

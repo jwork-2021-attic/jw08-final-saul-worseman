@@ -1,14 +1,13 @@
 package world;
 
-public class BlinkyAI extends CreatureAI{
+public class BlinkyAI extends GhostAI{
 
-    private char up = 187;
-    private char down = 186;
-    private char left = 184;
-    private char right = 185;
-    private Router router;
     public BlinkyAI(Creature creature) {
         super(creature);
+        up = 187;
+        down = 186;
+        left = 184;
+        right = 185;
         router = new BlinkyChaseRouter(creature);
     }
 

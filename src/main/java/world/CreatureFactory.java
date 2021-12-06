@@ -46,4 +46,10 @@ public class CreatureFactory {
         new PinkyAI(pinky);
         return pinky;
     }
+
+    public Creature newClyde(){
+        Creature clyde= new Creature(200, (char)182, 200,2);
+        new ClydeAI(clyde);
+        return clyde;
+    }
 }

@@ -61,6 +61,10 @@ public class PlayScreen implements Screen {
         c.setWorld(world);
         world.addAtEmptyLocation(c);
         c.start();
+        c = creatureFactory.newClyde();
+        c.setWorld(world);
+        world.addAtEmptyLocation(c);
+        c.start();
         world.registerPlayer(player);
         messages = new Messages(DIM,0,30);
         player.start();
