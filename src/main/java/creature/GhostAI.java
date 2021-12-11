@@ -6,11 +6,16 @@ import world.Tile;
 
 public abstract class GhostAI extends CreatureAI {
 
+
+    private final char runUp = 163;
+    private final char runDown = 162;
+    private final char runLeft = 160;
+    private final char runRight = 161;
     private final int countdown = 25;
-    protected char up = 187;
-    protected char down = 186;
-    protected char left = 184;
-    protected char right = 185;
+    protected char up = 163;
+    protected char down = 162;
+    protected char left = 160;
+    protected char right = 161;
     protected Router router;
     // private Creature creature;
     private int count;
@@ -23,9 +28,16 @@ public abstract class GhostAI extends CreatureAI {
     @Override
     public void route(){
         count = (count + 1) % countdown;
-        if(count == countdown / 5 * 4)
+        if(Player.getPlayer().getImmortal() > 0){
             this.scared();
-        if(count == 0)
+            this.changeface();
+        }
+        if(Player.getPlayer().getImmortal() == 0){
+            this.resume();
+        }
+        if(count == countdown / 5 * 4 && Player.getPlayer().getImmortal() == 0)
+            this.scared();
+        else if(count == 0 && Player.getPlayer().getImmortal() == 0)
             this.resume();
         int[] nextSteps = router.nextSteps();
         creature.moveBy(nextSteps[0],nextSteps[1]);
@@ -54,9 +66,11 @@ public abstract class GhostAI extends CreatureAI {
     @Override
     public void attack(Creature c){
         if(c instanceof Player){
-            c.setHp(Player.getPlayer().hp() - 1);
-            if(Player.getPlayer().getImmortal() > 0)
+            if(Player.getPlayer().getImmortal() == 0) {
+                c.setHp(Player.getPlayer().hp() - 1);
                 Player.getPlayer().shuffle();
+            }
+
         }
     }
 
@@ -64,6 +78,13 @@ public abstract class GhostAI extends CreatureAI {
 
     public void scared(){
         router = new GhostScaredRouter(creature);
+    }
+
+    public void changeface(){
+        up = runUp;
+        right = runRight;
+        down = runDown;
+        left = runLeft;
     }
 
 }

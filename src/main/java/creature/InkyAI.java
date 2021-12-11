@@ -15,6 +15,10 @@ public class InkyAI extends GhostAI{
 
     @Override
     public void resume() {
-
+        up = 179;
+        down = 178;
+        left = 176;
+        right = 177;
+        router = new InkyRouter(creature);
     }
 }

@@ -48,7 +48,7 @@ public class Player extends Creature {
         cheat = !cheat;
     }
 
-    public void setImmortal(int steps){immortalSteps = 100;}
+    public void setImmortal(int steps){immortalSteps = steps;}
 
     public int getImmortal(){return immortalSteps;}
 

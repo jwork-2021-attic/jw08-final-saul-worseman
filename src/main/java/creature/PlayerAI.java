@@ -46,7 +46,10 @@ public class PlayerAI extends CreatureAI {
     }
 
     public void route(){
-        Player.getPlayer().setImmortal(Player.getPlayer().getImmortal() - 1 );
+        if(Player.getPlayer().getImmortal() > 0) {
+            System.out.println(Player.getPlayer().getImmortal());
+            Player.getPlayer().setImmortal(Player.getPlayer().getImmortal() - 1);
+        }
         index = (index + 1) % up.length;
         if(dir == 0){
             creature.setGlyph(left[index]);

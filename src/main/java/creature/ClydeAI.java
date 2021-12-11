@@ -14,6 +14,10 @@ public class ClydeAI extends GhostAI {
 
     @Override
     public void resume() {
-        router = new ClydeChaseRouter(creature);
+
+        up = 183;
+        down = 182;
+        left = 180;
+        right = 181;router = new ClydeChaseRouter(creature);
     }
 }
