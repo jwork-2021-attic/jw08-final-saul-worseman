@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import creature.Player;
-import creature.*;
 
 public class BlinkyChaseRouter implements Router {
 
@@ -26,8 +25,8 @@ public class BlinkyChaseRouter implements Router {
 
     private void bfs(){
         Queue<int[]> queue = new LinkedList<int[]>();
-        visited = new boolean[creature.getWorld().width()][creature.getWorld().width()];
-        for (int i = 0; i < creature.getWorld().width(); i++){
+        visited = new boolean[creature.getWorld().getWidth()][creature.getWorld().getWidth()];
+        for (int i = 0; i < creature.getWorld().getWidth(); i++){
             Arrays.fill(visited[i],false);
         }
         //System.out.println(preyX + " " + preyY);

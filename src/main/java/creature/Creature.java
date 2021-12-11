@@ -35,6 +35,8 @@ public class Creature extends Thread{
     protected World world;
     protected static Lock lock = new ReentrantLock();
 
+    public Creature(){}
+
     private int attackValue;
     private int credits;
     protected int dir;

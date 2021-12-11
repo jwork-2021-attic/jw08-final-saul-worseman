@@ -19,6 +19,8 @@ package screen;
 
 import asciiPanel.AsciiPanel;
 
+import java.awt.event.KeyEvent;
+
 /**
  *
  * @author Aeranythe Echosong
@@ -30,6 +32,18 @@ public class StartScreen extends RestartScreen {
         terminal.write("This is the start screen.", 0, 0);
         terminal.write("Press ENTER to continue...", 0, 1);
         terminal.write("Press F6 to load the latest game", 0, 2);
+    }
+
+    @Override
+    public Screen respondToUserInput(KeyEvent key) {
+        switch (key.getKeyCode()) {
+            case KeyEvent.VK_C:
+                return new PlayScreen("1");
+            case KeyEvent.VK_ENTER:
+                return new PlayScreen();
+            default:
+                return this;
+        }
     }
 
 }

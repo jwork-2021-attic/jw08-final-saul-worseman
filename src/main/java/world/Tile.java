@@ -40,9 +40,11 @@ public enum Tile {
     private char glyph;
 
 
-    public char glyph() {
+    public char getGlyph() {
         return glyph;
     }
+
+    public void setGlyph(char glyph){this.glyph = glyph;}
 
     private Color color;
 

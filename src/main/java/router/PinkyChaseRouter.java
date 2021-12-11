@@ -24,8 +24,8 @@ public class PinkyChaseRouter implements Router {
 
     private void bfs(){
         Queue<int[]> queue = new LinkedList<int[]>();
-        visited = new boolean[creature.getWorld().width()][creature.getWorld().width()];
-        for (int i = 0; i < creature.getWorld().width(); i++){
+        visited = new boolean[creature.getWorld().getWidth()][creature.getWorld().getWidth()];
+        for (int i = 0; i < creature.getWorld().getWidth(); i++){
             Arrays.fill(visited[i],false);
         }
         //System.out.println(preyX + " " + preyY);

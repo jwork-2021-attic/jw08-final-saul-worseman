@@ -17,6 +17,7 @@
  */
 package screen;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import creature.Creature;
 import asciiPanel.AsciiPanel;
 import creature.CreatureFactory;
@@ -56,6 +57,12 @@ public class PlayScreen implements Screen{
     public PlayScreen(String url) {
         this.screenWidth = DIM;
         this.screenHeight = DIM;
+        resumeWorld();
+        createPlayer();
+        createCreatures();
+        world.registerPlayer(player);
+        messages = new Messages(DIM,0);
+        player.start();
     }
 
 
@@ -107,6 +114,17 @@ public class PlayScreen implements Screen{
 
     private void createWorld() {
         world = new WorldBuilder(DIM).setTiles().makeCaves().build();
+
+    }
+
+    public void resumeWorld(){
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            File file = new File("src/main/resources/world.json");
+            world = objectMapper.readValue(file, World.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void displayTiles(AsciiPanel terminal) {
@@ -143,6 +161,9 @@ public class PlayScreen implements Screen{
         switch (key.getKeyCode()) {
             case KeyEvent.VK_F5:
                 //TODO save some necessary info
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.writeValue(
+                        new FileOutputStream("src/main/resources/world.json"),world);
                 break;
             case KeyEvent.VK_C:
                 player.setCheat();
