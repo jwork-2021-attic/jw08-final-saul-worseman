@@ -64,7 +64,7 @@ public class WorldBuilder {
 
 
     public WorldBuilder makeCaves() {
-        int target = wallNum / 3;
+        int target = wallNum / 4;
         while(target > 0){
             int randomX = (int)(Math.random() * (col -2)) + 1;
             int randomY = (int)(Math.random() * (col -2)) + 1;

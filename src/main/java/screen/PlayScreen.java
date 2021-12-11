@@ -17,17 +17,16 @@
  */
 package screen;
 
+import creature.Creature;
 import asciiPanel.AsciiPanel;
+import creature.CreatureFactory;
+import creature.Player;
+import creature.PlayerAI;
 import messages.Messages;
 import world.*;
 
 import java.awt.event.KeyEvent;
-import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  *
@@ -48,23 +47,7 @@ public class PlayScreen implements Screen {
         this.screenHeight = DIM;
         createWorld();
         createPlayer();
-        Creature c = creatureFactory.newCoin();
-        c.setWorld(world);
-        world.addAtEmptyLocation(c);
-        c.start();
-        c = creatureFactory.newBlinky();
-        c.setWorld(world);
-        world.addAtEmptyLocation(c);
-        c.start();
-        world.registerPlayer(player);
-        c = creatureFactory.newPinky();
-        c.setWorld(world);
-        world.addAtEmptyLocation(c);
-        c.start();
-        c = creatureFactory.newClyde();
-        c.setWorld(world);
-        world.addAtEmptyLocation(c);
-        c.start();
+        createCreatures();
         world.registerPlayer(player);
         messages = new Messages(DIM,0,30);
         player.start();
@@ -78,10 +61,45 @@ public class PlayScreen implements Screen {
         new PlayerAI(player);
     }
 
+    private void createCreatures(){
+        Creature c;
+        for(int i = 0; i < target(); i++){
+            c = creatureFactory.newCoin();
+            c.setWorld(world);
+            world.addAtEmptyLocation(c);
+            c.start();
+            world.registerPlayer(player);
+
+        }
+        c = creatureFactory.newBlinky();
+        c.setWorld(world);
+        world.addAtEmptyLocation(c);
+        c.start();
+        world.registerPlayer(player);
+        c = creatureFactory.newPinky();
+        c.setWorld(world);
+        world.addAtEmptyLocation(c);
+        c.start();
+        c = creatureFactory.newClyde();
+        c.setWorld(world);
+        world.addAtEmptyLocation(c);
+        c.start();
+        c = creatureFactory.newInky();
+        c.setWorld(world);
+        world.addAtEmptyLocation(c);
+        c.start();
+        c = creatureFactory.newPower();
+        c.setWorld(world);
+        world.addAtEmptyLocation(c);
+        c.start();
+        world.registerPlayer(player);
+
+    }
+
     public static int target(){
         int res = 0;
         for(int i = 1; i <= level; i++){
-            res += i * 5;
+            res += i * 10;
         }
         return res;
     }
@@ -122,6 +140,10 @@ public class PlayScreen implements Screen {
     @Override
     public Screen respondToUserInput(KeyEvent key) {
         switch (key.getKeyCode()) {
+            case KeyEvent.VK_C:
+                player.setCheat();
+                messages.receiveCheatMessage();
+                break;
             case KeyEvent.VK_LEFT:
                 player.moveBy(-1, 0);
                 player.setDirection(0);
@@ -148,16 +170,10 @@ public class PlayScreen implements Screen {
             player.revive();
             return new LoseScreen();
         }
-        else if(player.getCredits()>= target() && level == 3 && player.readyForNextLevel()) {
+        else if(player.getCredits()>= target() && player.readyForNextLevel()) {
             world.end();
             player.revive();
             return new WinScreen();
-        }
-        else if(player.getCredits()>= target() && player.readyForNextLevel()){
-            world.end();
-            PlayScreen.level ++;
-            player.revive();
-            return new PlayScreen();
         }
         else
             return this;

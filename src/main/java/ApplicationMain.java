@@ -20,7 +20,6 @@ import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;
 import screen.Screen;
 import screen.StartScreen;
-import world.Creature;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -38,7 +37,7 @@ public class ApplicationMain extends JFrame implements KeyListener {
 
     public ApplicationMain() {
         super();
-        terminal = new AsciiPanel(59, 49, AsciiFont.img2);
+        terminal = new AsciiPanel(66, 49, AsciiFont.img2);
         add(terminal);
         pack();
         screen = new StartScreen();
