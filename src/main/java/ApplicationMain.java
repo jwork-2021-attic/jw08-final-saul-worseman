@@ -24,6 +24,7 @@ import screen.StartScreen;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -69,7 +70,11 @@ public class ApplicationMain extends JFrame implements KeyListener {
      * @param e
      */
     public void keyPressed(KeyEvent e) {
-        screen = screen.respondToUserInput(e);
+        try {
+            screen = screen.respondToUserInput(e);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
         repaint();
     }
 

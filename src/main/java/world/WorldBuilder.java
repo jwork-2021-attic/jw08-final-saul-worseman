@@ -29,7 +29,6 @@ public class WorldBuilder {
 
     private int col;
     private int row;
-    private int pathNum = 0;
     private int wallNum = 0;
     private Tile[][] tiles;
     public WorldBuilder(int dim) {
@@ -54,7 +53,6 @@ public class WorldBuilder {
                 }
                 else {
                     tiles[i][j] = Tile.PATH;
-                    pathNum++;
                 }
             }
         }

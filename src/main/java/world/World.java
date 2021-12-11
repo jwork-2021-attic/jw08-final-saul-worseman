@@ -1,8 +1,12 @@
 package world;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import creature.Creature;
 
 import java.awt.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
@@ -43,6 +47,12 @@ public class World {
         this.width = tiles.length;
         this.height = tiles[0].length;
         creatures = new ArrayList<>();
+    }
+
+    public Tile[][] getTiles(){return tiles;}
+
+    public void setTiles(Tile[][] tiles){
+        this.tiles = tiles;
     }
 
     public Tile tile(int x, int y) {
@@ -132,6 +142,12 @@ public class World {
         lock.unlock();
     }
 
-
+    public static void main(String[] args) throws IOException {
+        WorldBuilder worldBuilder = new WorldBuilder(49);
+        World world = worldBuilder.setTiles().build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writeValue(
+                new FileOutputStream("src/world.json"),world);
+    }
 
 }

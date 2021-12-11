@@ -14,7 +14,7 @@ public class Messages {
     private int reserved = 5;
     private AsciiPanel terminal;
     private List<String> otherInfo;
-    public Messages(int srcX, int srcY, int index){
+    public Messages(int srcX, int srcY){
         this.index = reserved;
         this.srcX = srcX;
         this.srcY = srcY;
@@ -41,11 +41,11 @@ public class Messages {
         // lazy
         this.terminal = terminal;
         //System.out.println(Player.getPlayer().hp());
-        terminal.write(String.format("level:%3d", PlayScreen.level()),srcX,srcY);
-        terminal.write(String.format(" hp  :%3d", Player.getPlayer().hp()),srcX,srcY + 1);
-        terminal.write(String.format("score:%3d", Player.getPlayer().getCredits()),srcX,srcY + 2);
-        terminal.write(String.format("goal :%3d", PlayScreen.target()),srcX,srcY + 3);
-        terminal.write("Press C to cheat ",srcX,srcY + 4);
+        terminal.write(String.format(" hp  :%3d", Player.getPlayer().hp()),srcX,srcY);
+        terminal.write(String.format("score:%3d", Player.getPlayer().getCredits()),srcX,srcY + 1);
+        terminal.write(String.format("goal :%3d", PlayScreen.target()),srcX,srcY + 2);
+        terminal.write("Press C to cheat ",srcX,srcY + 3);
+        terminal.write("Press F5 to save ",srcX,srcY + 4);
         writeAdapter();
     }
 

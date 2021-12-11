@@ -26,20 +26,20 @@ import messages.Messages;
 import world.*;
 
 import java.awt.event.KeyEvent;
+import java.io.*;
 import java.util.List;
 
 /**
  *
  * @author Aeranythe Echosong
  */
-public class PlayScreen implements Screen {
+public class PlayScreen implements Screen{
     public final static int DIM = 49;
     private World world;
     private Player player;
     private int screenWidth;
     private int screenHeight;
     private Messages messages;
-    private static int level = 1;
     private CreatureFactory creatureFactory = new CreatureFactory();
 
     public PlayScreen() {
@@ -49,11 +49,16 @@ public class PlayScreen implements Screen {
         createPlayer();
         createCreatures();
         world.registerPlayer(player);
-        messages = new Messages(DIM,0,30);
+        messages = new Messages(DIM,0);
         player.start();
     }
 
-    public static int level(){return level;}
+    public PlayScreen(String url) {
+        this.screenWidth = DIM;
+        this.screenHeight = DIM;
+    }
+
+
 
     private void createPlayer() {
         this.player = Player.getPlayer();
@@ -97,11 +102,7 @@ public class PlayScreen implements Screen {
     }
 
     public static int target(){
-        int res = 0;
-        for(int i = 1; i <= level; i++){
-            res += i * 10;
-        }
-        return res;
+        return 10;
     }
 
     private void createWorld() {
@@ -138,8 +139,11 @@ public class PlayScreen implements Screen {
 
 
     @Override
-    public Screen respondToUserInput(KeyEvent key) {
+    public Screen respondToUserInput(KeyEvent key) throws IOException {
         switch (key.getKeyCode()) {
+            case KeyEvent.VK_F5:
+                //TODO save some necessary info
+                break;
             case KeyEvent.VK_C:
                 player.setCheat();
                 messages.receiveCheatMessage();
