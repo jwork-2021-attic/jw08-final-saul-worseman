@@ -41,7 +41,7 @@ public class Messages {
         // lazy
         this.terminal = terminal;
         //System.out.println(Player.getPlayer().hp());
-        terminal.write(String.format(" hp  :%3d", Player.getPlayer().hp()),srcX,srcY);
+        terminal.write(String.format(" hp  :%3d", Player.getPlayer().getHp()),srcX,srcY);
         terminal.write(String.format("score:%3d", Player.getPlayer().getCredits()),srcX,srcY + 1);
         terminal.write(String.format("goal :%3d", PlayScreen.target()),srcX,srcY + 2);
         terminal.write("Press C to cheat ",srcX,srcY + 3);

@@ -37,7 +37,7 @@ public class StartScreen extends RestartScreen {
     @Override
     public Screen respondToUserInput(KeyEvent key) {
         switch (key.getKeyCode()) {
-            case KeyEvent.VK_C:
+            case KeyEvent.VK_F6:
                 return new PlayScreen("1");
             case KeyEvent.VK_ENTER:
                 return new PlayScreen();

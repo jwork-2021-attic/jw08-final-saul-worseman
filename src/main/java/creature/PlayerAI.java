@@ -46,8 +46,8 @@ public class PlayerAI extends CreatureAI {
     }
 
     public void route(){
-        if(Player.getPlayer().getImmortal() > 0) {
-            Player.getPlayer().setImmortal(Player.getPlayer().getImmortal() - 1);
+        if(Player.getPlayer().getImmortalSteps() > 0) {
+            Player.getPlayer().setImmortalSteps(Player.getPlayer().getImmortalSteps() - 1);
         }
         index = (index + 1) % up.length;
         if(dir == 0){
@@ -86,14 +86,14 @@ public class PlayerAI extends CreatureAI {
     }
 
     public void attack(Creature c){
-        if(Player.getPlayer().getImmortal() > 0){
-            c.setHp(c.hp() - 1);
+        if(Player.getPlayer().getImmortalSteps() > 0){
+            c.setHp(c.getHp() - 1);
         }
         else if(c.getTitle().equals("Coin"))
-            c.setHp(c.hp() - 1);
+            c.setHp(c.getHp() - 1);
         else if(c.getTitle().equals("Power")){
-            c.setHp(c.hp() - 1);
-            Player.getPlayer().setImmortal(100);
+            c.setHp(c.getHp() - 1);
+            Player.getPlayer().setImmortalSteps(100);
         }
         if(c.isDead()) {
             creature.earnCredits(c);

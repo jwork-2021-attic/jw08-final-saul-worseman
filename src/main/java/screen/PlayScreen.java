@@ -17,13 +17,15 @@
  */
 package screen;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import creature.Creature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import creature.*;
 import asciiPanel.AsciiPanel;
-import creature.CreatureFactory;
-import creature.Player;
-import creature.PlayerAI;
 import messages.Messages;
+import serializer.CreatureDeserializer;
+import serializer.CreatureSerializer;
+import serializer.PlayerSerializer;
 import world.*;
 
 import java.awt.event.KeyEvent;
@@ -48,8 +50,8 @@ public class PlayScreen implements Screen{
         this.screenHeight = DIM;
         createWorld();
         createPlayer();
+        world.register(player);
         createCreatures();
-        world.registerPlayer(player);
         messages = new Messages(DIM,0);
         player.start();
     }
@@ -59,8 +61,9 @@ public class PlayScreen implements Screen{
         this.screenHeight = DIM;
         resumeWorld();
         createPlayer();
-        createCreatures();
-        world.registerPlayer(player);
+        world.register(player);
+        resumeCreatures();
+
         messages = new Messages(DIM,0);
         player.start();
     }
@@ -73,6 +76,97 @@ public class PlayScreen implements Screen{
         new PlayerAI(player);
     }
 
+    private void savePlayer() throws IOException {
+        PlayerSerializer playerSerializer = new PlayerSerializer(Player.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule("PlayerSerializer");
+        module.addSerializer(playerSerializer);
+        objectMapper.registerModule(module);
+        objectMapper.writeValue(
+                new FileOutputStream("src/main/resources/player.json"),player);
+
+    }
+
+    private void resumePlayer(){
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            File file = new File("src/main/resources/player.json");
+            world = objectMapper.readValue(file, World.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveCreatures() throws IOException {
+        CreatureSerializer creatureSerializer = new CreatureSerializer(Creature.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Creature> temp = world.getCreatures();
+        SimpleModule module = new SimpleModule("CreatureSerializer");
+        module.addSerializer(creatureSerializer);
+        objectMapper.registerModule(module);
+        temp.remove(0);
+        objectMapper.writeValue(
+                new FileOutputStream("src/main/resources/creatures.json"),temp);
+        temp.add(0,player);
+        world.unlockWorld();
+    }
+
+    private void resumeCreatures(){
+        List<Creature> temp = null;
+        SimpleModule module = new SimpleModule("CreatureDeserializer");
+        module.addDeserializer(Creature.class,new CreatureDeserializer(Creature.class));
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(module);
+        try {
+            File file = new File("src/main/resources/creatures.json");
+            temp = objectMapper.readValue(file, new TypeReference<List<Creature>>(){});
+            System.out.println(temp.size());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        for(int i = 0; i < temp.size(); i++){
+            Creature c = temp.get(i);
+            if(c.getTitle().equals("Coin")){
+                new CoinAI(c);
+                c.setWorld(world);
+                world.register(c);
+                c.start();
+            }
+            else if(c.getTitle().equals("Power")){
+                new CreatureAI(c);
+                c.setWorld(world);
+                world.register(c);
+                c.start();
+            }
+            else if(c.getTitle().equals("Blinky")){
+                new BlinkyAI(c);
+                c.setWorld(world);
+                world.register(c);
+                c.start();
+            }
+            else if(c.getTitle().equals("Pinky")){
+                new PinkyAI(c);
+                c.setWorld(world);
+                world.register(c);
+                c.start();
+            }
+            else if(c.getTitle().equals("Clyde")){
+                new ClydeAI(c);
+                c.setWorld(world);
+                world.register(c);
+                c.start();
+            }
+            else if(c.getTitle().equals("Inky")){
+                new InkyAI(c);
+                c.setWorld(world);
+                world.register(c);
+                c.start();
+            }
+            
+        }
+    }
+
+
     private void createCreatures(){
         Creature c;
         for(int i = 0; i < target(); i++){
@@ -80,14 +174,12 @@ public class PlayScreen implements Screen{
             c.setWorld(world);
             world.addAtEmptyLocation(c);
             c.start();
-            world.registerPlayer(player);
 
         }
         c = creatureFactory.newBlinky();
         c.setWorld(world);
         world.addAtEmptyLocation(c);
         c.start();
-        world.registerPlayer(player);
         c = creatureFactory.newPinky();
         c.setWorld(world);
         world.addAtEmptyLocation(c);
@@ -104,7 +196,6 @@ public class PlayScreen implements Screen{
         c.setWorld(world);
         world.addAtEmptyLocation(c);
         c.start();
-        world.registerPlayer(player);
 
     }
 
@@ -115,6 +206,12 @@ public class PlayScreen implements Screen{
     private void createWorld() {
         world = new WorldBuilder(DIM).setTiles().makeCaves().build();
 
+    }
+
+    private void saveWorld() throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writeValue(
+                new FileOutputStream("src/main/resources/world.json"),world);
     }
 
     public void resumeWorld(){
@@ -139,7 +236,7 @@ public class PlayScreen implements Screen{
         }
         List<Creature> creatures = world.getCreatures();
         for (Creature creature : creatures){
-            terminal.write(creature.glyph(), creature.x(), creature.y());
+            terminal.write(creature.getGlyph(), creature.getX(), creature.getY());
         }
         world.unlockWorld();
     }
@@ -150,7 +247,7 @@ public class PlayScreen implements Screen{
         // Terrain and creatures
         displayTiles(terminal);
         // Player
-        terminal.write(player.glyph(), player.x() , player.y());
+        terminal.write(player.getGlyph(), player.getX() , player.getY());
         // Messages
         messages.display(terminal);
     }
@@ -161,12 +258,13 @@ public class PlayScreen implements Screen{
         switch (key.getKeyCode()) {
             case KeyEvent.VK_F5:
                 //TODO save some necessary info
-                ObjectMapper objectMapper = new ObjectMapper();
-                objectMapper.writeValue(
-                        new FileOutputStream("src/main/resources/world.json"),world);
+                saveWorld();
+                savePlayer();
+                saveCreatures();
+
                 break;
             case KeyEvent.VK_C:
-                player.setCheat();
+                player.reverseCheat();
                 messages.receiveCheatMessage();
                 break;
             case KeyEvent.VK_LEFT:
@@ -190,7 +288,7 @@ public class PlayScreen implements Screen{
     }
 
     public Screen nextFrame(){
-        if(player.hp() <= 0) {
+        if(player.getHp() <= 0) {
             world.end();
             player.revive();
             return new LoseScreen();

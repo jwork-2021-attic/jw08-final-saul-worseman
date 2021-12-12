@@ -26,11 +26,11 @@ public class ClydeChaseRouter implements Router {
         do{
             int[][] directions = new int[][]{{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
             dice = (int)(Math.random() * 4);
-            x = creature.x() + directions[dice][0];
-            y = creature.y() + directions[dice][1];
+            x = creature.getX() + directions[dice][0];
+            y = creature.getY() + directions[dice][1];
             t = creature.getWorld().tile(x,y);
         } while(!(x < 48 && x > 0 && y < 48 && y > 0 && (t == Tile.PATH || t == Tile.LAVA)));
-        return new int[]{x - creature.x(), y - creature.y()};
+        return new int[]{x - creature.getX(), y - creature.getY()};
     }
 
 }

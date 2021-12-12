@@ -23,7 +23,7 @@ import world.Tile;
  *
  * @author Aeranythe Echosong
  */
-class CreatureAI {
+public class CreatureAI {
 
     protected Creature creature;
 

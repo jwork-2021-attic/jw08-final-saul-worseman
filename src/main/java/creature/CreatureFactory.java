@@ -29,38 +29,38 @@ public class CreatureFactory {
     }
 
     public Creature newCoin(){
-        Creature coin = new Creature(1, (char) 144,1,0,"Coin");
+        Creature coin = new Creature(1, (char) 144,1,"Coin");
         new CoinAI(coin);
         return coin;
     }
 
 
     public Creature newBlinky(){
-        Creature blinky = new Creature(1, (char)186, 200,2,"Blinky");
+        Creature blinky = new Creature(1, (char)186, 200,"Blinky");
         new BlinkyAI(blinky);
         return blinky;
     }
 
     public Creature newPinky(){
-        Creature pinky = new Creature(1, (char)166, 200,2,"Pinky");
+        Creature pinky = new Creature(1, (char)166, 200,"Pinky");
         new PinkyAI(pinky);
         return pinky;
     }
 
     public Creature newClyde(){
-        Creature clyde = new Creature(1, (char)182, 200,2,"Clyde");
+        Creature clyde = new Creature(1, (char)182, 200,"Clyde");
         new ClydeAI(clyde);
         return clyde;
     }
 
     public Creature newInky(){
-        Creature clyde = new Creature(1, (char)178, 200,2,"Inky");
+        Creature clyde = new Creature(1, (char)178, 200,"Inky");
         new InkyAI(clyde);
         return clyde;
     }
 
     public Creature newPower(){
-        Creature power = new Creature(1, (char)152, 0,0,"Power");
+        Creature power = new Creature(1, (char)152, 0,"Power");
         new CreatureAI(power);
         return power;
     }

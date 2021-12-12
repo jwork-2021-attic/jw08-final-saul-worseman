@@ -28,16 +28,16 @@ public abstract class GhostAI extends CreatureAI {
     @Override
     public void route(){
         count = (count + 1) % countdown;
-        if(Player.getPlayer().getImmortal() > 0){
+        if(Player.getPlayer().getImmortalSteps() > 0){
             this.scared();
             this.changeface();
         }
-        if(Player.getPlayer().getImmortal() == 0){
+        if(Player.getPlayer().getImmortalSteps() == 0){
             this.resume();
         }
-        if(count == countdown / 5 * 4 && Player.getPlayer().getImmortal() == 0)
+        if(count == countdown / 5 * 4 && Player.getPlayer().getImmortalSteps() == 0)
             this.scared();
-        else if(count == 0 && Player.getPlayer().getImmortal() == 0)
+        else if(count == 0 && Player.getPlayer().getImmortalSteps() == 0)
             this.resume();
         int[] nextSteps = router.nextSteps();
         creature.moveBy(nextSteps[0],nextSteps[1]);
@@ -66,8 +66,8 @@ public abstract class GhostAI extends CreatureAI {
     @Override
     public void attack(Creature c){
         if(c instanceof Player){
-            if(Player.getPlayer().getImmortal() == 0) {
-                c.setHp(Player.getPlayer().hp() - 1);
+            if(Player.getPlayer().getImmortalSteps() == 0) {
+                c.setHp(Player.getPlayer().getHp() - 1);
                 Player.getPlayer().shuffle();
             }
 

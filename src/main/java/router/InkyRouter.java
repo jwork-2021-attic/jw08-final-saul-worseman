@@ -1,13 +1,7 @@
 package router;
 
 import creature.Creature;
-import creature.InkyAI;
 import creature.Player;
-import world.Tile;
-
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
 
 public class InkyRouter implements Router{
     private Creature prey = Player.getPlayer();
@@ -23,7 +17,7 @@ public class InkyRouter implements Router{
 
     @Override
     public int[] nextSteps() {
-        int dis = Math.abs(prey.x() - creature.x()) + Math.abs(prey.y() - creature.y());
+        int dis = Math.abs(prey.getX() - creature.getX()) + Math.abs(prey.getY() - creature.getY());
         if(dis >= mhtDistance){
             router = new BlinkyChaseRouter(creature);
         }

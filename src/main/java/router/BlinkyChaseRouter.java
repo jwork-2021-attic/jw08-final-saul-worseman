@@ -38,7 +38,7 @@ public class BlinkyChaseRouter implements Router {
                 int x = tuple[0] + directions[i][0];
                 int y = tuple[1] + directions[i][1];
                 Tile t = creature.getWorld().tile(x,y);
-                if(x == creature.x() && y == creature.y()){
+                if(x == creature.getX() && y == creature.getY()){
                     nextPos[0] = tuple[0];
                     nextPos[1] = tuple[1];
                     return;
@@ -54,10 +54,10 @@ public class BlinkyChaseRouter implements Router {
     }
 
     public int[] nextSteps(){
-        preyX = prey.x();
-        preyY = prey.y();
+        preyX = prey.getX();
+        preyY = prey.getY();
         bfs();
-        return new int[]{nextPos[0] - creature.x(),nextPos[1] - creature.y()};
+        return new int[]{nextPos[0] - creature.getX(),nextPos[1] - creature.getY()};
     }
 
 }

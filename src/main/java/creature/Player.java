@@ -21,17 +21,14 @@ import world.Tile;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- *
- * @author Aeranythe Echosong
- */
+
 public class Player extends Creature {
 
     private static Player player = new Player();
     private boolean cheat;
     private int immortalSteps;
     private Player(){
-        super(3, (char)224, 0,1,"Player");
+        super(3, (char)224, 0,"Player");
         setX(1);
         setY(1);
         cheat = false;
@@ -44,18 +41,26 @@ public class Player extends Creature {
         return player;
     }
 
-    public void setCheat(){
+    public void reverseCheat(){
         cheat = !cheat;
     }
 
-    public void setImmortal(int steps){immortalSteps = steps;}
+    public boolean getCheat(){
+        return cheat;
+    }
 
-    public int getImmortal(){return immortalSteps;}
+    public void setCheat(boolean cheat){
+        this.cheat = cheat;
+    }
 
-    public int hp(){
+    public void setImmortalSteps(int steps){immortalSteps = steps;}
+
+    public int getImmortalSteps(){return immortalSteps;}
+
+    public int getHp(){
         if(cheat == true)
             return 3;
-        return super.hp();
+        return super.getHp();
     }
 
     public int getCredits(){
@@ -76,7 +81,7 @@ public class Player extends Creature {
             try {
                 TimeUnit.MILLISECONDS.sleep(100);
                 route();
-                if(world.tile(this.x(), this.y()) == Tile.DOOR)
+                if(world.tile(this.getX(), this.getY()) == Tile.DOOR)
                     ready = true;
                 else
                     ready = false;

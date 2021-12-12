@@ -17,6 +17,7 @@
  */
 package creature;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import world.World;
 
 import java.util.concurrent.TimeUnit;
@@ -32,40 +33,47 @@ public class Creature extends Thread{
     protected String title;
     protected int Hp;
     protected int maxHp;
+    @JsonIgnore
     protected World world;
+    private int credits;
+    private int x;
+    private int y;
+    private char glyph;
+    @JsonIgnore
+    private CreatureAI ai;
+    @JsonIgnore
     protected static Lock lock = new ReentrantLock();
 
     public Creature(){}
 
-    private int attackValue;
-    private int credits;
-    protected int dir;
-    private int x;
 
-    public int hp(){
+    public int getMaxHp(){return maxHp;}
+
+    public void setMaxHp(int maxHp){this.maxHp = maxHp;}
+
+    public int getHp(){
         return Hp;
     }
     public void setX(int x) {
         this.x = x;
     }
 
-    public int x() {
+    public int getX() {
         return x;
     }
 
-    private int y;
 
     public void setY(int y) {
         this.y = y;
     }
 
-    public int y() {
+    public int getY() {
         return y;
     }
 
-    private char glyph;
 
-    public char glyph() {
+
+    public char getGlyph() {
         return this.glyph;
     }
 
@@ -84,9 +92,6 @@ public class Creature extends Thread{
     public World getWorld(){
         return world;
     }
-
-
-    private CreatureAI ai;
 
     public void setAI(CreatureAI ai) {
         this.ai = ai;
@@ -112,6 +117,8 @@ public class Creature extends Thread{
         return credits;
     }
 
+    public void setCredits(int credits){this.credits = credits;}
+
     public void setHp(int newHp){
         Hp = newHp;
     }
@@ -130,13 +137,12 @@ public class Creature extends Thread{
         return Hp <= 0;
     }
 
-    public Creature(int maxHp, char glyph, int credits, int attckValue,String title) {
+    public Creature(int maxHp, char glyph, int credits,String title) {
         this.title = title;
         this.Hp = maxHp;
         this.maxHp = maxHp;
         this.glyph = glyph;
         this.credits = credits;
-        this.attackValue = attckValue;
     }
 
 
