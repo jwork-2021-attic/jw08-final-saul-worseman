@@ -25,6 +25,7 @@ import asciiPanel.AsciiPanel;
 import messages.Messages;
 import serializer.CreatureDeserializer;
 import serializer.CreatureSerializer;
+import serializer.PlayerDeserializer;
 import serializer.PlayerSerializer;
 import world.*;
 
@@ -60,8 +61,7 @@ public class PlayScreen implements Screen{
         this.screenWidth = DIM;
         this.screenHeight = DIM;
         resumeWorld();
-        createPlayer();
-        world.register(player);
+        resumePlayer();
         resumeCreatures();
 
         messages = new Messages(DIM,0);
@@ -89,12 +89,18 @@ public class PlayScreen implements Screen{
 
     private void resumePlayer(){
         ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule("PlayeDeserializer");
+        module.addDeserializer(Player.class,new PlayerDeserializer(Player.class));
+        objectMapper.registerModule(module);
         try {
             File file = new File("src/main/resources/player.json");
-            world = objectMapper.readValue(file, World.class);
+            player = objectMapper.readValue(file, Player.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        world.register(player);
+        player.setWorld(world);
+        new PlayerAI(player);
     }
 
     private void saveCreatures() throws IOException {
@@ -156,13 +162,12 @@ public class PlayScreen implements Screen{
                 world.register(c);
                 c.start();
             }
-            else if(c.getTitle().equals("Inky")){
+            else if(c.getTitle().equals("Inky")) {
                 new InkyAI(c);
                 c.setWorld(world);
                 world.register(c);
                 c.start();
             }
-            
         }
     }
 
