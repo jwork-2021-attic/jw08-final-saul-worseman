@@ -2,7 +2,10 @@ package world;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import creature.Creature;
+import creature.Player;
+import serializer.CreatureSerializer;
 
 import java.awt.*;
 import java.io.*;
@@ -11,28 +14,7 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-/*
- * Copyright (C) 2015 Aeranythe Echosong
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
 
-/**
- *
- * @author Aeranythe Echosong
- */
 public class World {
 
     private Tile[][] tiles;
@@ -40,7 +22,7 @@ public class World {
     private int height;
     @JsonIgnore
     private List<Creature> creatures;
-   //private Lock lock = new ReentrantLock();
+   private Lock lock = new ReentrantLock();
 
     public World(Tile[][] tiles) {
         this.tiles = tiles;
@@ -132,16 +114,13 @@ public class World {
     }
 
     public List<Creature> getCreatures(){
-        //lock.lock();
+        lock.lock();
         return creatures;
     }
 
     public void unlockWorld(){
-        //lock.unlock();
+        lock.unlock();
     }
-    
-    
-
 
     public void end(){
         //lock.lock();
@@ -150,6 +129,122 @@ public class World {
         }
         //lock.unlock();
     }
+    /*
+    *
+
+    private void saveCreatures() throws IOException {
+        CreatureSerializer creatureSerializer = new CreatureSerializer(Creature.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Creature> temp = world.getCreatures();
+        SimpleModule module = new SimpleModule("CreatureSerializer");
+        module.addSerializer(creatureSerializer);
+        objectMapper.registerModule(module);
+        temp.remove(0);
+        objectMapper.writeValue(
+                new FileOutputStream("src/main/resources/creatures.json"),temp);
+        temp.add(0,player);
+        world.unlockWorld();
+    }
+
+    private void resumeCreatures(){
+        List<Creature> temp = null;
+        SimpleModule module = new SimpleModule("CreatureDeserializer");
+        module.addDeserializer(Creature.class,new CreatureDeserializer(Creature.class));
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(module);
+        try {
+            File file = new File("src/main/resources/creatures.json");
+            temp = objectMapper.readValue(file, new TypeReference<List<Creature>>(){});
+            System.out.println(temp.size());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        for(int i = 0; i < temp.size(); i++){
+            Creature c = temp.get(i);
+            if(c.getTitle().equals("Coin")){
+                new CoinAI(c);
+                c.setWorld(world);
+                world.register(c);
+                c.start();
+            }
+            else if(c.getTitle().equals("Power")){
+                new CreatureAI(c);
+                c.setWorld(world);
+                world.register(c);
+                c.start();
+            }
+            else if(c.getTitle().equals("Blinky")){
+                new BlinkyAI(c);
+                c.setWorld(world);
+                world.register(c);
+                c.start();
+            }
+            else if(c.getTitle().equals("Pinky")){
+                new PinkyAI(c);
+                c.setWorld(world);
+                world.register(c);
+                c.start();
+            }
+            else if(c.getTitle().equals("Clyde")){
+                new ClydeAI(c);
+                c.setWorld(world);
+                world.register(c);
+                c.start();
+            }
+            else if(c.getTitle().equals("Inky")) {
+                new InkyAI(c);
+                c.setWorld(world);
+                world.register(c);
+                c.start();
+            }
+        }
+    }*/
+
+    public void saveCreaturesAsString(){
+
+    }
+
+    public void saveCreaturesAsJson() throws IOException {
+        CreatureSerializer creatureSerializer = new CreatureSerializer(Creature.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Creature> temp = this.getCreatures();
+        SimpleModule module = new SimpleModule("CreatureSerializer");
+        module.addSerializer(creatureSerializer);
+        objectMapper.registerModule(module);
+        temp.remove(0);
+        objectMapper.writeValue(
+                new FileOutputStream("src/main/resources/creatures.json"),temp);
+        temp.add(0, Player.getPlayer());
+        unlockWorld();
+    }
+
+    public void resumeCreaturesfromJson(){
+
+    }
+
+    public void resumeCreaturesfromString(){
+
+    }
+
+    // save world without creatures
+
+    public void saveWorldAsString(){
+
+    }
+
+    public void saveWorldAsJson(){
+
+    }
+
+    public void resumeWorldfromJson(){
+
+    }
+
+    public void resumeWorldfromString(){
+
+    }
+
+
 
     public static void main(String[] args) throws IOException {
 //        WorldBuilder worldBuilder = new WorldBuilder(49);
@@ -158,7 +253,7 @@ public class World {
 //        objectMapper.writeValue(
 //                new OutputStreamWriter(new FileOutputStream("src/main/resources/world.json"),"UTF-8"),world);
 //        objectMapper.writeValueAsString(world);
-//        //String s = new String("{\"tiles\":[[\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\"],[\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\"],[\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\"],[\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\"],[\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\"],[\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\"],[\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\"],[\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\"],[\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\"],[\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\"],[\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\"],[\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\"],[\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\"],[\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\"],[\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\"],[\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\"],[\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"WALL\",\"WALL\",\"PATH\",\"WALL\"],[\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"WALL\",\"PATH\",\"PATH\",\"PATH\",\"WALL\",\"DOOR\",\"WALL\"],[\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\",\"WALL\"]],\"width\":49,\"height\":49}");
+//        
 //        try {
 //           // BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("D:\\test.txt"),"UTF-8"))
 //            InputStreamReader reader = (new InputStreamReader(new FileInputStream("src/main/resources/world.json"),"UTF-8"));

@@ -15,9 +15,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package screen;
+package screen.player;
 
 import asciiPanel.AsciiPanel;
+import screen.Screen;
+import screen.RestartScreen;
 
 import java.awt.event.KeyEvent;
 

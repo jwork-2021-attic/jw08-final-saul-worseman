@@ -1,7 +1,7 @@
 package messages;
 import creature.Player;
 import asciiPanel.AsciiPanel;
-import screen.PlayScreen;
+import screen.player.PlayScreen;
 
 import java.util.ArrayList;
 import java.util.List;

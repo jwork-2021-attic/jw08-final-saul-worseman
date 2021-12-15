@@ -19,12 +19,16 @@
 import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;
 import screen.Screen;
-import screen.StartScreen;
+import screen.invader.InvaderPlayerScreen;
+import screen.invader.InvaderStartScreen;
+import screen.player.StartScreen;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.IOException;
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -42,6 +46,28 @@ public class ApplicationMain extends JFrame implements KeyListener {
         add(terminal);
         pack();
         screen = new StartScreen();
+        addKeyListener(this);
+        repaint();
+        Thread refreshThread = new Thread(()->{
+            while(true){
+                try {
+                    screen = screen.nextFrame();
+                    TimeUnit.MILLISECONDS.sleep(50);
+                    repaint();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        refreshThread.start();
+    }
+
+    public ApplicationMain(int mode){
+        super();
+        terminal = new AsciiPanel(66, 49, AsciiFont.img2);
+        add(terminal);
+        pack();
+        screen = new InvaderStartScreen();
         addKeyListener(this);
         repaint();
         Thread refreshThread = new Thread(()->{
@@ -92,10 +118,17 @@ public class ApplicationMain extends JFrame implements KeyListener {
     public void keyTyped(KeyEvent e) {
     }
 
-    public static void main(String[] args) {
-        ApplicationMain app = new ApplicationMain();
-        app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        app.setVisible(true);
+    public static void main(String[] args) throws IOException {
+        if(args.length != 0){
+            ApplicationMain app = new ApplicationMain(1);
+            app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            app.setVisible(true);
+        }
+        else {
+            ApplicationMain app = new ApplicationMain();
+            app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            app.setVisible(true);
+        }
     }
 
 }

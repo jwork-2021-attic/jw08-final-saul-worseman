@@ -68,7 +68,7 @@ public abstract class GhostAI extends CreatureAI {
         if(c instanceof Player){
             if(Player.getPlayer().getImmortalSteps() == 0) {
                 c.setHp(Player.getPlayer().getHp() - 1);
-                Player.getPlayer().shuffle();
+                Player.getPlayer().shuttle();
             }
 
         }

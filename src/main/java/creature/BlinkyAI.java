@@ -19,7 +19,8 @@ public class BlinkyAI extends GhostAI {
         up = 187;
         down = 186;
         left = 184;
-        right = 185;router = new BlinkyChaseRouter(creature);
+        right = 185;
+        router = new BlinkyChaseRouter(creature);
     }
 
 

@@ -71,7 +71,7 @@ public class Player extends Creature {
         return ready;
     }
 
-    public void shuffle(){
+    public void shuttle(){
         world.addAtEmptyLocation(this);
     }
 

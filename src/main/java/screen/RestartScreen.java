@@ -18,6 +18,8 @@
 package screen;
 
 import asciiPanel.AsciiPanel;
+import screen.Screen;
+import screen.player.PlayScreen;
 
 import java.awt.event.KeyEvent;
 

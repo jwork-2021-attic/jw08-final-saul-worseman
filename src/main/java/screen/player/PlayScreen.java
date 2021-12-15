@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package screen;
+package screen.player;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import creature.*;
 import asciiPanel.AsciiPanel;
 import messages.Messages;
+import screen.Screen;
 import serializer.CreatureDeserializer;
 import serializer.CreatureSerializer;
 import serializer.PlayerDeserializer;
@@ -31,13 +32,15 @@ import world.*;
 
 import java.awt.event.KeyEvent;
 import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.List;
 
 /**
  *
  * @author Aeranythe Echosong
  */
-public class PlayScreen implements Screen{
+public class PlayScreen implements Screen {
     public final static int DIM = 49;
     private World world;
     private Player player;
@@ -55,6 +58,28 @@ public class PlayScreen implements Screen{
         createCreatures();
         messages = new Messages(DIM,0);
         player.start();
+        Thread listenThread = new Thread(()->{
+            try {
+                ServerSocket serverSocket = new ServerSocket(18848);
+                Socket socket = serverSocket.accept();
+                while(true) {
+                    PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    String read = in.readLine();
+                    while (read != null) {
+                        if(read.equals("creatures")){
+                            out.println("creaturesinfo");
+                            out.flush();
+                            System.out.println("creaturesinfo");
+                        }
+                        read = in.readLine();
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        listenThread.start();
     }
 
     public PlayScreen(String url) {
@@ -63,12 +88,9 @@ public class PlayScreen implements Screen{
         resumeWorld();
         resumePlayer();
         resumeCreatures();
-
         messages = new Messages(DIM,0);
         player.start();
     }
-
-
 
     private void createPlayer() {
         this.player = Player.getPlayer();
@@ -89,7 +111,7 @@ public class PlayScreen implements Screen{
 
     private void resumePlayer(){
         ObjectMapper objectMapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule("PlayeDeserializer");
+        SimpleModule module = new SimpleModule("PlayerDeserializer");
         module.addDeserializer(Player.class,new PlayerDeserializer(Player.class));
         objectMapper.registerModule(module);
         try {
