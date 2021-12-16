@@ -6,11 +6,10 @@ import screen.Screen;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 
-public class InvaderLoseScreen implements Screen {
-
+public class InvaderWinScreen implements Screen {
     @Override
     public void displayOutput(AsciiPanel terminal) {
-        terminal.write("You lost!",0,0);
+        terminal.write("You win!",0,0);
     }
 
     @Override

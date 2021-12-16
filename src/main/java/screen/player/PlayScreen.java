@@ -63,7 +63,7 @@ public class PlayScreen implements Screen {
         });
         Thread thread = new Thread(()->{
             try {
-                nioMultiServer.start();
+                nioMultiServer.start(world);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -285,12 +285,10 @@ public class PlayScreen implements Screen {
     public Screen nextFrame(){
         if(player.getHp() <= 0) {
             world.end();
-            player.revive();
             return new LoseScreen();
         }
         else if(player.getCredits()>= target() && player.readyForNextLevel()) {
             world.end();
-            player.revive();
             return new WinScreen();
         }
         else

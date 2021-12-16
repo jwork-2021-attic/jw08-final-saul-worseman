@@ -97,6 +97,10 @@ public class Creature extends Thread{
         this.ai = ai;
     }
 
+    public CreatureAI getAI(){
+        return this.ai;
+    }
+
     public void moveBy(int mx, int my) {
         try{
             lock.lock();
@@ -130,8 +134,6 @@ public class Creature extends Thread{
     public void attack(Creature other) {
         ai.attack(other);
     }
-
-
 
     public boolean isDead(){
         return Hp <= 0;

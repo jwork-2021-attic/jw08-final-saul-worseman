@@ -33,6 +33,9 @@ public class InvaderPlayerScreen implements Screen {
     NIOClient client;
     String role;
     public InvaderPlayerScreen(String role) throws IOException {
+        socket = new Socket("127.0.0.1",18848);
+        out = new PrintWriter(socket.getOutputStream(), true);
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.role = role;
         registerRole();
         objectMapper = new ObjectMapper();
@@ -40,9 +43,6 @@ public class InvaderPlayerScreen implements Screen {
         module.addDeserializer(Player.class,new PlayerDeserializer(Player.class));
         module.addDeserializer(Creature.class,new CreatureDeserializer(Creature.class));
         objectMapper.registerModule(module);
-        socket = new Socket("127.0.0.1",18848);
-        out = new PrintWriter(socket.getOutputStream(), true);
-        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.screenWidth = DIM;
         this.screenHeight = DIM;
         loadWorld();
@@ -50,9 +50,14 @@ public class InvaderPlayerScreen implements Screen {
         client = NIOClient.start();
     }
 
-    private void registerRole(){
+    private void registerRole() throws IOException {
         out.println("role");
         out.println(role);
+        String info = in.readLine();
+        System.out.println(info);
+        if(!info.equals("registered successfully!"))
+            System.exit(-1);
+
     }
 
     private void loadCreatures() throws IOException {
@@ -121,16 +126,16 @@ public class InvaderPlayerScreen implements Screen {
     public Screen respondToUserInput(KeyEvent key) throws IOException {
         switch (key.getKeyCode()) {
             case KeyEvent.VK_LEFT:
-                client.sendMessage("left");
+                client.sendMessage(role + " left");
                 break;
             case KeyEvent.VK_RIGHT:
-                client.sendMessage("right");
+                client.sendMessage(role + " right");
                 break;
             case KeyEvent.VK_UP:
-                client.sendMessage("up");
+                client.sendMessage(role + " up");
                 break;
             case KeyEvent.VK_DOWN:
-                client.sendMessage("down");
+                client.sendMessage(role + " down");
                 break;
         }
         return this;
@@ -138,6 +143,18 @@ public class InvaderPlayerScreen implements Screen {
 
     @Override
     public Screen nextFrame() {
+        if(player.getHp() <= 0)
+            return new InvaderWinScreen();
+        List<Creature> list = world.getCreatures();
+        world.unlockWorld();
+        var exist = false;
+        for(Creature c: list){
+            if(c.getTitle().equals(role)){
+                exist = true;
+            }
+        }
+        if(!exist)
+            return new InvaderLoseScreen();
         return this;
     }
 }

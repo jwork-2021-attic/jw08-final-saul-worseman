@@ -11,7 +11,7 @@ import java.net.Socket;
 public class InvaderStartScreen implements Screen {
     private String role;
 
-    InvaderStartScreen(String role){
+    public InvaderStartScreen(String role){
         this.role = role;
     }
 

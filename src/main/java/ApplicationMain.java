@@ -67,11 +67,7 @@ public class ApplicationMain extends JFrame implements KeyListener {
         terminal = new AsciiPanel(66, 49, AsciiFont.img2);
         add(terminal);
         pack();
-        try {
-            screen = new InvaderStartScreen(role);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        screen = new InvaderStartScreen(role);
         addKeyListener(this);
         repaint();
         Thread refreshThread = new Thread(()->{
@@ -124,7 +120,7 @@ public class ApplicationMain extends JFrame implements KeyListener {
 
     public static void main(String[] args) throws IOException {
         if(args.length != 0){
-            ApplicationMain app = new ApplicationMain(1);
+            ApplicationMain app = new ApplicationMain(args[0]);
             app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             app.setVisible(true);
         }

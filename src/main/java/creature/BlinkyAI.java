@@ -15,13 +15,10 @@ public class BlinkyAI extends GhostAI {
 
     @Override
     public void resume() {
-
         up = 187;
         down = 186;
         left = 184;
         right = 185;
         router = new BlinkyChaseRouter(creature);
     }
-
-
 }

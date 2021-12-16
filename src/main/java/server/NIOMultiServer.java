@@ -1,5 +1,9 @@
 package server;
 
+import creature.*;
+import router.InvaderControlRouter;
+import world.World;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -9,11 +13,14 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 public class NIOMultiServer {
     private static final String POISON_PILL = "POISON_PILL";
-    public void start() throws IOException {
+    private World world;
+    public void start(World world) throws IOException {
+        this.world = world;
         Selector selector = Selector.open();
         ServerSocketChannel serverSocket = ServerSocketChannel.open();
         serverSocket.bind(new InetSocketAddress("localhost", 28848));
@@ -36,7 +43,7 @@ public class NIOMultiServer {
             }
         }
     }
-    private static void answerWithEcho(ByteBuffer buffer, SelectionKey key)
+    private void answerWithEcho(ByteBuffer buffer, SelectionKey key)
             throws IOException {
         SocketChannel client = (SocketChannel) key.channel();
         client.read(buffer);
@@ -48,6 +55,8 @@ public class NIOMultiServer {
         else {
             buffer.flip();
             client.write(buffer);
+            String cmd = new String(buffer.array()).trim();
+            processCmd(cmd);
             System.out.println(new String(buffer.array()).trim());
             buffer.clear();
             buffer.put(new byte[256]);
@@ -56,22 +65,37 @@ public class NIOMultiServer {
         }
     }
 
-    private static void register(Selector selector, ServerSocketChannel serverSocket)
-            throws IOException {
+    private  void processCmd(String cmd){
+        String temp[] = cmd.split("\\s+");
+        String role = temp[0];
+        String movement = temp[1];
+        List<Creature> list = world.getCreatures();
+        world.unlockWorld();
+        for(Creature c :list){
+            if(c.getTitle().equals(role)&&role.equals("Blinky")){
+                InvaderControlRouter  router = (InvaderControlRouter) ((BlinkyAI) (GhostAI) c.getAI()).getRouter();
+                router.receive(movement);
+            }
+            else if(c.getTitle().equals(role)&&role.equals("Pinky")){
+                InvaderControlRouter  router = (InvaderControlRouter) ((PinkyAI) (GhostAI) c.getAI()).getRouter();
+                router.receive(movement);
+            }
+            else if(c.getTitle().equals(role)&&role.equals("Inky")){
+                InvaderControlRouter  router = (InvaderControlRouter) ((InkyAI) (GhostAI) c.getAI()).getRouter();
+                router.receive(movement);
+            }
+            else if(c.getTitle().equals(role)&&role.equals("Clyde")){
+                InvaderControlRouter  router = (InvaderControlRouter) ((ClydeAI) (GhostAI) c.getAI()).getRouter();
+                router.receive(movement);
+            }
+        }
+    }
 
+    private  void register(Selector selector, ServerSocketChannel serverSocket)
+            throws IOException {
         SocketChannel client = serverSocket.accept();
         client.configureBlocking(false);
         client.register(selector, SelectionKey.OP_READ);
     }
 
-//    public static Process start() throws IOException, InterruptedException {
-//        String javaHome = System.getProperty("java.home");
-//        String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
-//        String classpath = System.getProperty("java.class.path");
-//        String className = NIOMultiServer.class.getCanonicalName();
-//
-//        ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classpath, className);
-//
-//        return builder.start();
-//    }
 }

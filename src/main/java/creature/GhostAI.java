@@ -17,10 +17,12 @@ public abstract class GhostAI extends CreatureAI {
     protected char left = 160;
     protected char right = 161;
     protected Router router;
+    protected boolean assumed;
     // private Creature creature;
     private int count;
     public GhostAI(Creature creature) {
         super(creature);
+        assumed = false;
         this.creature = creature;
         count = 0;
     }
@@ -28,17 +30,19 @@ public abstract class GhostAI extends CreatureAI {
     @Override
     public void route(){
         count = (count + 1) % countdown;
-        if(Player.getPlayer().getImmortalSteps() > 0){
-            this.scared();
-            this.changeface();
+        if(!this.assumed){
+            if(Player.getPlayer().getImmortalSteps() > 0){
+                this.scared();
+                this.changeface();
+            }
+            if(Player.getPlayer().getImmortalSteps() == 0){
+                this.resume();
+            }
+            if(count == countdown / 5 * 4 && Player.getPlayer().getImmortalSteps() == 0)
+                this.scared();
+            else if(count == 0 && Player.getPlayer().getImmortalSteps() == 0)
+                this.resume();
         }
-        if(Player.getPlayer().getImmortalSteps() == 0){
-            this.resume();
-        }
-        if(count == countdown / 5 * 4 && Player.getPlayer().getImmortalSteps() == 0)
-            this.scared();
-        else if(count == 0 && Player.getPlayer().getImmortalSteps() == 0)
-            this.resume();
         int[] nextSteps = router.nextSteps();
         creature.moveBy(nextSteps[0],nextSteps[1]);
         if(nextSteps[0] == -1){
@@ -78,6 +82,15 @@ public abstract class GhostAI extends CreatureAI {
 
     public void scared(){
         router = new GhostScaredRouter(creature);
+    }
+
+    public void assumeRouter(Router router){
+        assumed = true;
+        this.router = router;
+    }
+
+    public Router getRouter(){
+        return this.router;
     }
 
     public void changeface(){
