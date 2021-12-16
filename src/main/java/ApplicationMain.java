@@ -62,12 +62,16 @@ public class ApplicationMain extends JFrame implements KeyListener {
         refreshThread.start();
     }
 
-    public ApplicationMain(int mode){
+    public ApplicationMain(String role){
         super();
         terminal = new AsciiPanel(66, 49, AsciiFont.img2);
         add(terminal);
         pack();
-        screen = new InvaderStartScreen();
+        try {
+            screen = new InvaderStartScreen(role);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         addKeyListener(this);
         repaint();
         Thread refreshThread = new Thread(()->{
@@ -96,12 +100,12 @@ public class ApplicationMain extends JFrame implements KeyListener {
      * @param e
      */
     public void keyPressed(KeyEvent e) {
-        try {
-            screen = screen.respondToUserInput(e);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        repaint();
+            try {
+                screen = screen.respondToUserInput(e);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            repaint();
     }
 
     /**

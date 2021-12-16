@@ -1,11 +1,15 @@
 package world;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import creature.Creature;
-import creature.Player;
+import creature.*;
+import serializer.CreatureDeserializer;
 import serializer.CreatureSerializer;
+import serializer.PlayerDeserializer;
+import serializer.PlayerSerializer;
 
 import java.awt.*;
 import java.io.*;
@@ -22,8 +26,8 @@ public class World {
     private int height;
     @JsonIgnore
     private List<Creature> creatures;
-   private Lock lock = new ReentrantLock();
-
+    private Lock lock = new ReentrantLock();
+    private ObjectMapper objectMapper = new ObjectMapper();
     public World(Tile[][] tiles) {
         this.tiles = tiles;
         this.width = tiles.length;
@@ -31,6 +35,7 @@ public class World {
         creatures = new ArrayList<>();
     }
 
+    public void setCreatures(ArrayList<Creature> temp){this.creatures = temp;}
 
     public World(){
         creatures = new ArrayList<>();
@@ -129,121 +134,76 @@ public class World {
         }
         //lock.unlock();
     }
-    /*
-    *
 
-    private void saveCreatures() throws IOException {
+    public String saveCreaturesAsString() throws JsonProcessingException {
         CreatureSerializer creatureSerializer = new CreatureSerializer(Creature.class);
-        ObjectMapper objectMapper = new ObjectMapper();
-        List<Creature> temp = world.getCreatures();
+        List<Creature> temp = this.getCreatures();
         SimpleModule module = new SimpleModule("CreatureSerializer");
         module.addSerializer(creatureSerializer);
         objectMapper.registerModule(module);
-        temp.remove(0);
-        objectMapper.writeValue(
-                new FileOutputStream("src/main/resources/creatures.json"),temp);
-        temp.add(0,player);
-        world.unlockWorld();
+        String res = objectMapper.writeValueAsString(temp);
+        unlockWorld();
+        return res;
     }
 
-    private void resumeCreatures(){
+
+
+    public void resumeCreaturesfromString(String info) throws IOException {
         List<Creature> temp = null;
         SimpleModule module = new SimpleModule("CreatureDeserializer");
         module.addDeserializer(Creature.class,new CreatureDeserializer(Creature.class));
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(module);
-        try {
-            File file = new File("src/main/resources/creatures.json");
-            temp = objectMapper.readValue(file, new TypeReference<List<Creature>>(){});
-            System.out.println(temp.size());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        for(int i = 0; i < temp.size(); i++){
+        temp = objectMapper.readValue(info, new TypeReference<List<Creature>>(){});
+        for(int i = 0; i < temp.size(); i++) {
             Creature c = temp.get(i);
-            if(c.getTitle().equals("Coin")){
+            if (c.getTitle().equals("Coin")) {
                 new CoinAI(c);
-                c.setWorld(world);
-                world.register(c);
-                c.start();
-            }
-            else if(c.getTitle().equals("Power")){
+            } else if (c.getTitle().equals("Power")) {
                 new CreatureAI(c);
-                c.setWorld(world);
-                world.register(c);
-                c.start();
-            }
-            else if(c.getTitle().equals("Blinky")){
+            } else if (c.getTitle().equals("Blinky")) {
                 new BlinkyAI(c);
-                c.setWorld(world);
-                world.register(c);
-                c.start();
-            }
-            else if(c.getTitle().equals("Pinky")){
+            } else if (c.getTitle().equals("Pinky")) {
                 new PinkyAI(c);
-                c.setWorld(world);
-                world.register(c);
-                c.start();
-            }
-            else if(c.getTitle().equals("Clyde")){
+            } else if (c.getTitle().equals("Clyde")) {
                 new ClydeAI(c);
-                c.setWorld(world);
-                world.register(c);
-                c.start();
-            }
-            else if(c.getTitle().equals("Inky")) {
+            } else if (c.getTitle().equals("Inky")) {
                 new InkyAI(c);
-                c.setWorld(world);
-                world.register(c);
-                c.start();
             }
+            c.setWorld(this);
+            this.register(c);
+            c.start();
         }
-    }*/
-
-    public void saveCreaturesAsString(){
-
     }
 
-    public void saveCreaturesAsJson() throws IOException {
-        CreatureSerializer creatureSerializer = new CreatureSerializer(Creature.class);
+    public String saveWorldAsString() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-        List<Creature> temp = this.getCreatures();
-        SimpleModule module = new SimpleModule("CreatureSerializer");
-        module.addSerializer(creatureSerializer);
+        System.out.println("1"+ objectMapper.writeValueAsString(this));
+        return objectMapper.writeValueAsString(this);
+    }
+
+
+    public String savePlayerAsString() throws JsonProcessingException {
+        Player player = Player.getPlayer();
+        PlayerSerializer playerSerializer = new PlayerSerializer(Player.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule("PlayerSerializer");
+        module.addSerializer(playerSerializer);
         objectMapper.registerModule(module);
-        temp.remove(0);
-        objectMapper.writeValue(
-                new FileOutputStream("src/main/resources/creatures.json"),temp);
-        temp.add(0, Player.getPlayer());
-        unlockWorld();
+        return objectMapper.writeValueAsString(player);
     }
 
-    public void resumeCreaturesfromJson(){
-
+    public void resumePlayerfromString(String info) throws IOException {
+        Player player = Player.getPlayer();
+        ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule("PlayerDeserializer");
+        module.addDeserializer(Player.class,new PlayerDeserializer(Player.class));
+        objectMapper.registerModule(module);
+        player = objectMapper.readValue(info, Player.class);
+        this.register(player);
+        player.setWorld(this);
+        new PlayerAI(player);
     }
-
-    public void resumeCreaturesfromString(){
-
-    }
-
-    // save world without creatures
-
-    public void saveWorldAsString(){
-
-    }
-
-    public void saveWorldAsJson(){
-
-    }
-
-    public void resumeWorldfromJson(){
-
-    }
-
-    public void resumeWorldfromString(){
-
-    }
-
 
 
     public static void main(String[] args) throws IOException {

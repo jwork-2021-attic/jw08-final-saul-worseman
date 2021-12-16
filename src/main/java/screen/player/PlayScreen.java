@@ -28,18 +28,14 @@ import serializer.CreatureDeserializer;
 import serializer.CreatureSerializer;
 import serializer.PlayerDeserializer;
 import serializer.PlayerSerializer;
+import server.MultiServer;
+import server.NIOMultiServer;
 import world.*;
 
 import java.awt.event.KeyEvent;
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.List;
 
-/**
- *
- * @author Aeranythe Echosong
- */
 public class PlayScreen implements Screen {
     public final static int DIM = 49;
     private World world;
@@ -48,7 +44,8 @@ public class PlayScreen implements Screen {
     private int screenHeight;
     private Messages messages;
     private CreatureFactory creatureFactory = new CreatureFactory();
-
+    private  MultiServer server = new MultiServer();
+    NIOMultiServer nioMultiServer = new NIOMultiServer();
     public PlayScreen() {
         this.screenWidth = DIM;
         this.screenHeight = DIM;
@@ -57,45 +54,39 @@ public class PlayScreen implements Screen {
         world.register(player);
         createCreatures();
         messages = new Messages(DIM,0);
-        player.start();
         Thread listenThread = new Thread(()->{
             try {
-                ServerSocket serverSocket = new ServerSocket(18848);
-                Socket socket = serverSocket.accept();
-                while(true) {
-                    PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    String read = in.readLine();
-                    while (read != null) {
-                        if(read.equals("creatures")){
-                            out.println("creaturesinfo");
-                            out.flush();
-                            System.out.println("creaturesinfo");
-                        }
-                        read = in.readLine();
-                    }
-                }
+                server.start(18848,world);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        Thread thread = new Thread(()->{
+            try {
+                nioMultiServer.start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
         listenThread.start();
+        thread.start();
     }
 
     public PlayScreen(String url) {
         this.screenWidth = DIM;
         this.screenHeight = DIM;
+        world = new World();
         resumeWorld();
         resumePlayer();
         resumeCreatures();
         messages = new Messages(DIM,0);
-        player.start();
     }
 
     private void createPlayer() {
         this.player = Player.getPlayer();
         player.setWorld(world);
         new PlayerAI(player);
+        player.start();
     }
 
     private void savePlayer() throws IOException {
@@ -132,10 +123,8 @@ public class PlayScreen implements Screen {
         SimpleModule module = new SimpleModule("CreatureSerializer");
         module.addSerializer(creatureSerializer);
         objectMapper.registerModule(module);
-        temp.remove(0);
         objectMapper.writeValue(
                 new FileOutputStream("src/main/resources/creatures.json"),temp);
-        temp.add(0,player);
         world.unlockWorld();
     }
 
@@ -156,40 +145,20 @@ public class PlayScreen implements Screen {
             Creature c = temp.get(i);
             if(c.getTitle().equals("Coin")){
                 new CoinAI(c);
-                c.setWorld(world);
-                world.register(c);
-                c.start();
-            }
-            else if(c.getTitle().equals("Power")){
+            } else if(c.getTitle().equals("Power")){
                 new CreatureAI(c);
-                c.setWorld(world);
-                world.register(c);
-                c.start();
-            }
-            else if(c.getTitle().equals("Blinky")){
+            } else if(c.getTitle().equals("Blinky")){
                 new BlinkyAI(c);
-                c.setWorld(world);
-                world.register(c);
-                c.start();
-            }
-            else if(c.getTitle().equals("Pinky")){
+            } else if(c.getTitle().equals("Pinky")){
                 new PinkyAI(c);
-                c.setWorld(world);
-                world.register(c);
-                c.start();
-            }
-            else if(c.getTitle().equals("Clyde")){
+            } else if(c.getTitle().equals("Clyde")){
                 new ClydeAI(c);
-                c.setWorld(world);
-                world.register(c);
-                c.start();
-            }
-            else if(c.getTitle().equals("Inky")) {
+            } else if(c.getTitle().equals("Inky")) {
                 new InkyAI(c);
-                c.setWorld(world);
-                world.register(c);
-                c.start();
             }
+            c.setWorld(world);
+            world.register(c);
+            c.start();
         }
     }
 
@@ -288,7 +257,6 @@ public class PlayScreen implements Screen {
                 saveWorld();
                 savePlayer();
                 saveCreatures();
-
                 break;
             case KeyEvent.VK_C:
                 player.reverseCheat();

@@ -9,33 +9,31 @@ import java.io.*;
 import java.net.Socket;
 
 public class InvaderStartScreen implements Screen {
-    Socket socket;
+    private String role;
 
-    {
-        try {
-            socket = new Socket("127.0.0.1",18848);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    InvaderStartScreen(String role){
+        this.role = role;
+    }
+
+
+    public InvaderStartScreen() throws IOException {
+
     }
 
     @Override
     public void displayOutput(AsciiPanel terminal) {
-        terminal.write("Hello ,invader", 0, 0);
+        terminal.write("Hello,invader", 0, 0);
+        terminal.write("You choose to play the role of" + role,0,1);
     }
 
     @Override
     public Screen respondToUserInput(KeyEvent key) throws IOException {
         switch (key.getKeyCode()) {
-            case KeyEvent.VK_C:
-                loadCreatures();
-                break;
             case KeyEvent.VK_ENTER:
-                return new InvaderPlayerScreen();
+                return new InvaderPlayerScreen(role);
             default:
                 return this;
         }
-        return this;
     }
 
     @Override
@@ -43,15 +41,5 @@ public class InvaderStartScreen implements Screen {
         return this;
     }
 
-    private void loadCreatures() throws IOException {
-        System.out.println(1);
-        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        out.println("creatures");
-        out.flush();
-        String creatures = null;
 
-        creatures = in.readLine();
-        System.out.println(creatures);
-    }
 }
