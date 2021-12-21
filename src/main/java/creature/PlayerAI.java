@@ -78,12 +78,6 @@ public class PlayerAI extends CreatureAI {
         return dir;
     }
 
-    public void revive(){
-        creature.setX(1);
-        creature.setY(1);
-        if(creature.getCredits() >= 10)
-            creature.reset();
-    }
 
     public void attack(Creature c){
         if(Player.getPlayer().getImmortalSteps() > 0){

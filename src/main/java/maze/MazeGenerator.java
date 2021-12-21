@@ -23,7 +23,7 @@ public class MazeGenerator {
         }
     }
 
-    void generate(){
+    private void generate(){
         walls.add(new int[]{1,2});
         walls.add(new int[]{2,1});
         while(union.clusterSize(dim + 1) != (dim - 1) / 2 * (dim - 1) / 2 && !walls.isEmpty()){
@@ -72,7 +72,6 @@ public class MazeGenerator {
         return maze;
     }
     public void draw(){
-
         for(int i = 0; i < dim; i++){
             for(int j = 0; j < dim; j++)
                 System.out.print(grid[i][j] + " ");

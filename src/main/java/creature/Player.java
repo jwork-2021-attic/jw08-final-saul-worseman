@@ -99,9 +99,4 @@ public class Player extends Creature {
             }
         }
     }
-
-
-    public void revive(){
-        player = new Player();
-    }
 }

@@ -56,8 +56,6 @@ public enum Tile {
         return this != Tile.WALL && this != Tile.BOUNDS;
     }
 
-    public boolean isDoor(){return this == Tile.DOOR;}
-
     Tile(char glyph, Color color) {
         this.glyph = glyph;
         this.color = color;

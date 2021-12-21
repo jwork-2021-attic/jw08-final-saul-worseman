@@ -59,5 +59,4 @@ public class BlinkyChaseRouter implements Router {
         bfs();
         return new int[]{nextPos[0] - creature.getX(),nextPos[1] - creature.getY()};
     }
-
 }

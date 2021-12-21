@@ -114,6 +114,7 @@ public class PlayScreen implements Screen {
         world.register(player);
         player.setWorld(world);
         new PlayerAI(player);
+        player.start();
     }
 
     private void saveCreatures() throws IOException {
@@ -210,7 +211,7 @@ public class PlayScreen implements Screen {
                 new FileOutputStream("src/main/resources/world.json"),world);
     }
 
-    public void resumeWorld(){
+    private void resumeWorld(){
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             File file = new File("src/main/resources/world.json");
@@ -253,7 +254,6 @@ public class PlayScreen implements Screen {
     public Screen respondToUserInput(KeyEvent key) throws IOException {
         switch (key.getKeyCode()) {
             case KeyEvent.VK_F5:
-                //TODO save some necessary info
                 saveWorld();
                 savePlayer();
                 saveCreatures();
@@ -284,11 +284,9 @@ public class PlayScreen implements Screen {
 
     public Screen nextFrame(){
         if(player.getHp() <= 0) {
-            world.end();
             return new LoseScreen();
         }
         else if(player.getCredits()>= target() && player.readyForNextLevel()) {
-            world.end();
             return new WinScreen();
         }
         else

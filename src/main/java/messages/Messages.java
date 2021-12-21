@@ -10,7 +10,6 @@ public class Messages {
     int srcX;
     int srcY;
     int index;
-    int count = 0;
     private int reserved = 5;
     private AsciiPanel terminal;
     private List<String> otherInfo;
@@ -19,6 +18,11 @@ public class Messages {
         this.srcX = srcX;
         this.srcY = srcY;
         this.otherInfo = new ArrayList<>();
+    }
+
+
+    public List<String> getOtherInfo(){
+        return otherInfo;
     }
 
     public void writeAdapter(){
@@ -50,11 +54,10 @@ public class Messages {
     }
 
     public void receiveCheatMessage(){
-        if(count % 2 == 0)
+        if(Player.getPlayer().getCheat())
             addAdapter("cheat mode");
         else
             addAdapter("normal mode");
-        count ++;
     }
 
 

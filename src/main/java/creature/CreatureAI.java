@@ -42,10 +42,6 @@ public class CreatureAI {
 
     }
 
-    public void revive(){
-
-    }
-
     public void setDirection(int dir){
 
     }

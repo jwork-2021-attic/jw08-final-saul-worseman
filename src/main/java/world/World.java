@@ -127,13 +127,6 @@ public class World {
         lock.unlock();
     }
 
-    public void end(){
-        //lock.lock();
-        for(Creature c: creatures){
-            c.setHp(0);
-        }
-        //lock.unlock();
-    }
 
     public String saveCreaturesAsString() throws JsonProcessingException {
         CreatureSerializer creatureSerializer = new CreatureSerializer(Creature.class);
@@ -146,35 +139,6 @@ public class World {
         return res;
     }
 
-
-
-    public void resumeCreaturesfromString(String info) throws IOException {
-        List<Creature> temp = null;
-        SimpleModule module = new SimpleModule("CreatureDeserializer");
-        module.addDeserializer(Creature.class,new CreatureDeserializer(Creature.class));
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(module);
-        temp = objectMapper.readValue(info, new TypeReference<List<Creature>>(){});
-        for(int i = 0; i < temp.size(); i++) {
-            Creature c = temp.get(i);
-            if (c.getTitle().equals("Coin")) {
-                new CoinAI(c);
-            } else if (c.getTitle().equals("Power")) {
-                new CreatureAI(c);
-            } else if (c.getTitle().equals("Blinky")) {
-                new BlinkyAI(c);
-            } else if (c.getTitle().equals("Pinky")) {
-                new PinkyAI(c);
-            } else if (c.getTitle().equals("Clyde")) {
-                new ClydeAI(c);
-            } else if (c.getTitle().equals("Inky")) {
-                new InkyAI(c);
-            }
-            c.setWorld(this);
-            this.register(c);
-            c.start();
-        }
-    }
 
     public String saveWorldAsString() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -191,18 +155,6 @@ public class World {
         module.addSerializer(playerSerializer);
         objectMapper.registerModule(module);
         return objectMapper.writeValueAsString(player);
-    }
-
-    public void resumePlayerfromString(String info) throws IOException {
-        Player player = Player.getPlayer();
-        ObjectMapper objectMapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule("PlayerDeserializer");
-        module.addDeserializer(Player.class,new PlayerDeserializer(Player.class));
-        objectMapper.registerModule(module);
-        player = objectMapper.readValue(info, Player.class);
-        this.register(player);
-        player.setWorld(this);
-        new PlayerAI(player);
     }
 
 

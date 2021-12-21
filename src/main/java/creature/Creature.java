@@ -156,13 +156,7 @@ public class Creature extends Thread{
         ai.route();
     }
 
-    public void reset(){
-        credits = 0;
-        Hp = maxHp;
-    }
-    public void revive(){
-        ai.revive();
-    }
+
 
     public void setDirection(int dir){
         ai.setDirection(dir);

@@ -11,7 +11,6 @@ public class Main {
         MazeGenerator maze = new MazeGenerator(9);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.writeValue(new FileOutputStream("src/main/resources/maze.json"),maze);
-        maze.generate();
         maze.draw();
     }
 }
