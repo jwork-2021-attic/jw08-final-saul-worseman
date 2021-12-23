@@ -1,0 +1,8 @@
+creature\BlinkyAITest.class
+screen\player\PlayScreenTest.class
+messages\MessagesTest.class
+creature\CreatureTest.class
+maze\MazeGeneratorTest.class
+maze\UnionFindTest.class
+world\WorldTest.class
+creature\PlayerAITest.class
