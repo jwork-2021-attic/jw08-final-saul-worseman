@@ -1,6 +1,6 @@
 package creature;
 
-import router.PinkyChaseRouter;
+import creature.router.PinkyChaseRouter;
 
 public class PinkyAI extends GhostAI {
     public PinkyAI(Creature creature) {

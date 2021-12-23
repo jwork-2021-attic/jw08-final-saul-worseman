@@ -1,6 +1,6 @@
 package creature;
 
-import router.InkyRouter;
+import creature.router.InkyRouter;
 
 public class InkyAI extends GhostAI{
 

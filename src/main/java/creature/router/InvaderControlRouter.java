@@ -1,4 +1,4 @@
-package router;
+package creature.router;
 
 public class InvaderControlRouter implements Router{
     String cmd = "stay";

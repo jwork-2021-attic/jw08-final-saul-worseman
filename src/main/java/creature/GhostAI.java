@@ -1,7 +1,7 @@
 package creature;
 
-import router.GhostScaredRouter;
-import router.Router;
+import creature.router.GhostScaredRouter;
+import creature.router.Router;
 import world.Tile;
 
 public abstract class GhostAI extends CreatureAI {

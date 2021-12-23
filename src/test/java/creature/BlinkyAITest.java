@@ -2,8 +2,8 @@ package creature;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import router.BlinkyChaseRouter;
-import router.GhostScaredRouter;
+import creature.router.BlinkyChaseRouter;
+import creature.router.GhostScaredRouter;
 
 import static org.junit.jupiter.api.Assertions.*;
 

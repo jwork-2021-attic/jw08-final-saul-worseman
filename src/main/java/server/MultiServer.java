@@ -1,7 +1,7 @@
 package server;
 
 import creature.*;
-import router.InvaderControlRouter;
+import creature.router.InvaderControlRouter;
 import world.World;
 
 import java.io.BufferedReader;
@@ -62,7 +62,6 @@ public class MultiServer {
                         else{
                             out.println("Failed.No such role or the role has been occupied!");
                         }
-
                     }
                 }
                 in.close();

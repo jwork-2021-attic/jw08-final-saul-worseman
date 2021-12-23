@@ -96,7 +96,7 @@ public class PlayScreen implements Screen {
         module.addSerializer(playerSerializer);
         objectMapper.registerModule(module);
         objectMapper.writeValue(
-                new FileOutputStream("src/main/resources/player.json"),player);
+                new FileOutputStream("player.json"),player);
 
     }
 
@@ -106,7 +106,7 @@ public class PlayScreen implements Screen {
         module.addDeserializer(Player.class,new PlayerDeserializer(Player.class));
         objectMapper.registerModule(module);
         try {
-            File file = new File("src/main/resources/player.json");
+            File file = new File("player.json");
             player = objectMapper.readValue(file, Player.class);
         } catch (IOException e) {
             e.printStackTrace();
@@ -125,7 +125,7 @@ public class PlayScreen implements Screen {
         module.addSerializer(creatureSerializer);
         objectMapper.registerModule(module);
         objectMapper.writeValue(
-                new FileOutputStream("src/main/resources/creatures.json"),temp);
+                new FileOutputStream("creatures.json"),temp);
         world.unlockWorld();
     }
 
@@ -136,7 +136,7 @@ public class PlayScreen implements Screen {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(module);
         try {
-            File file = new File("src/main/resources/creatures.json");
+            File file = new File("creatures.json");
             temp = objectMapper.readValue(file, new TypeReference<List<Creature>>(){});
             System.out.println(temp.size());
         } catch (IOException e) {
@@ -208,13 +208,13 @@ public class PlayScreen implements Screen {
     private void saveWorld() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.writeValue(
-                new FileOutputStream("src/main/resources/world.json"),world);
+                new FileOutputStream("world.json"),world);
     }
 
     private void resumeWorld(){
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            File file = new File("src/main/resources/world.json");
+            File file = new File("world.json");
             world = objectMapper.readValue(file, World.class);
         } catch (IOException e) {
             e.printStackTrace();

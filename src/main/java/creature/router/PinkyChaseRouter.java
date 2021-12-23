@@ -1,4 +1,4 @@
-package router;
+package creature.router;
 
 import creature.Creature;
 import creature.Player;

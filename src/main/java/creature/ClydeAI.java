@@ -1,6 +1,6 @@
 package creature;
 
-import router.ClydeChaseRouter;
+import creature.router.ClydeChaseRouter;
 
 public class ClydeAI extends GhostAI {
     public ClydeAI(Creature creature) {
